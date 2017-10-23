@@ -14,7 +14,8 @@ import pl.ogiba.spaceshooter.R;
  * Created by robertogiba on 23.10.2017.
  */
 
-public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callback {
+public class GameSurfaceView extends SurfaceView
+        implements SurfaceHolder.Callback {
 
     private GameThread thread;
 
@@ -40,6 +41,7 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
     @Override
     public void surfaceChanged(SurfaceHolder surfaceHolder, int format, int width, int height) {
         thread.setSurfaceSize(width, height);
+        thread.setState(GameState.READY);
     }
 
     @Override

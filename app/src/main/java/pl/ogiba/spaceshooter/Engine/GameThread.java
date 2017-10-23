@@ -8,6 +8,8 @@ import android.graphics.Matrix;
 import android.graphics.RectF;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
+import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 
@@ -17,7 +19,7 @@ import pl.ogiba.spaceshooter.Engine.Nodes.ShipNode;
  * Created by robertogiba on 23.10.2017.
  */
 
-public class GameThread extends Thread {
+public class GameThread extends Thread implements GestureDetector.OnGestureListener {
     private int canvasWidth = 1;
     private int canvasHeight = 1;
 
@@ -29,7 +31,9 @@ public class GameThread extends Thread {
     private final Object runLock = new Object();
 
     final private SurfaceHolder surfaceHolder;
-    private Context context;
+    final private Context context;
+    final GestureDetector gestureDetector;
+
     private IGameStateHolder gameState;
 
     private ShipNode shipNode;
@@ -39,6 +43,7 @@ public class GameThread extends Thread {
     public GameThread(SurfaceHolder surfaceHolder, Context context) {
         this.surfaceHolder = surfaceHolder;
         this.context = context;
+        this.gestureDetector = new GestureDetector(context, this);
 
         this.shipNode = new ShipNode();
     }
@@ -84,6 +89,7 @@ public class GameThread extends Thread {
 
     public void gameOver() {
         setState(GameState.PLAYER_FAILED);
+        shipNode.setDefaultSpeed();
         gameState.notifyPlayerFailed();
     }
 
@@ -110,16 +116,59 @@ public class GameThread extends Thread {
     public boolean doTouchEvent(MotionEvent event) {
         boolean handled = true;
         if (mode == GameState.RUNNING) {
-            switch (event.getAction() & MotionEvent.ACTION_MASK) {
-                case MotionEvent.ACTION_DOWN:
-                case MotionEvent.ACTION_POINTER_DOWN:
-                    break;
-            }
+//            switch (event.getAction() & MotionEvent.ACTION_MASK) {
+//                case MotionEvent.ACTION_DOWN:
+//                case MotionEvent.ACTION_POINTER_DOWN:
+//                    break;
+//            }
+            gestureDetector.onTouchEvent(event);
         } else {
             handled = false;
         }
 
         return handled;
+    }
+
+    @Override
+    public boolean onDown(MotionEvent motionEvent) {
+        return false;
+    }
+
+    @Override
+    public void onShowPress(MotionEvent motionEvent) {
+
+    }
+
+    @Override
+    public boolean onSingleTapUp(MotionEvent motionEvent) {
+        return false;
+    }
+
+    @Override
+    public boolean onScroll(MotionEvent motionEvent, MotionEvent motionEvent1, float v, float v1) {
+        return false;
+    }
+
+    @Override
+    public void onLongPress(MotionEvent motionEvent) {
+
+    }
+
+    @Override
+    public boolean onFling(MotionEvent start, MotionEvent finish, float xVelocity, float yVelocity) {
+        if (start.getRawY() < finish.getRawY()) {
+            Log.d( "GameThread", "Swiped down!" );
+        } else if(start.getRawY() > finish.getRawY()) {
+            Log.d( "GameThread", "Swiped up!" );
+        }
+
+        if (start.getRawX() < finish.getRawX()) {
+            Log.d( "GameThread", "Swiped right!" );
+        } else if (start.getRawX() > finish.getRawX()) {
+            Log.d( "GameThread", "Swiped left!" );
+        }
+
+        return true;
     }
 
     private void doDraw(Canvas canvas) {
@@ -151,7 +200,7 @@ public class GameThread extends Thread {
         double elapsed = (now - lastTime) / 1000.0;
 
         double ratio = elapsed / 0.015d;
-        shipNode.updatePosition(ratio);
+//        shipNode.updatePosition(ratio);
         this.lastTime = now;
     }
 
