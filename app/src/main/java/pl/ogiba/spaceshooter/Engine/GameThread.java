@@ -20,6 +20,8 @@ import pl.ogiba.spaceshooter.Engine.Nodes.ShipNode;
  */
 
 public class GameThread extends Thread{
+    private static final String TAG = "GameThread";
+
     private int canvasWidth = 1;
     private int canvasHeight = 1;
 
@@ -118,12 +120,15 @@ public class GameThread extends Thread{
                 case MotionEvent.ACTION_DOWN:
                 case MotionEvent.ACTION_POINTER_DOWN:
 //                    gestureDetector.onTouchEvent(event);
+                    Log.d(TAG, "ACTION_DOWN");
                     break;
                 case MotionEvent.ACTION_MOVE:
                     shipNode.moveToPosition(event.getX());
                     break;
                 case MotionEvent.ACTION_UP:
                 case MotionEvent.ACTION_POINTER_UP:
+                    Log.d(TAG, "ACTION_UP");
+                    shipNode.setSpeedDirectly(0f);
                     break;
             }
         } else {
