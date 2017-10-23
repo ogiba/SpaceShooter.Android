@@ -172,8 +172,11 @@ public class GameThread extends Thread {
     }
 
     private void drawProjectiles(Canvas canvas) {
-        for (ProjectileNode projectile : projectiles) {
-            canvas.drawRect(projectile.getRect(), projectile.getCurrentPaint());
+        for (ProjectileNode projectile : new ArrayList<>(projectiles)) {
+            if (projectile.getRect().centerY() >= 0)
+                canvas.drawRect(projectile.getRect(), projectile.getCurrentPaint());
+            else
+                projectiles.remove(projectile);
         }
     }
 
