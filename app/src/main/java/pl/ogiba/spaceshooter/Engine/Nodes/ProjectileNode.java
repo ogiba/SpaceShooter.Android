@@ -23,8 +23,8 @@ public class ProjectileNode extends PaintNode {
     public ProjectileNode(float originXPos, float originYPos){
         super(Color.YELLOW);
 
-        this.originXPos = originXPos;
-        this.originYPos = originYPos;
+        this.originXPos = originXPos + BASE_PROJECTILE_THICKNESS;
+        this.originYPos = originYPos - BASE_PROJECTILE_LENGTH;
         this.currentVector = new Vector2(0.0f, -0.1f).normalize();
         generateNewPosition();
     }
