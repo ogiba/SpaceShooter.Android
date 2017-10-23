@@ -15,8 +15,6 @@ public class ShipNode extends BaseNode implements ICollisionInvoker {
     public static final float DEFAULT_SPEED = 0f;
 
     private float speed = DEFAULT_SPEED;
-    private float viewWidth;
-    private float viewHeight;
 
     private float targetX;
     private float targetY;
@@ -26,8 +24,8 @@ public class ShipNode extends BaseNode implements ICollisionInvoker {
     }
 
     public void setDefaultPosition(float viewWidth, float viewHeight) {
-        this.viewWidth = viewWidth;
-        this.viewHeight = viewHeight;
+        this.pitchWidth = viewWidth;
+        this.pitchHeight = viewHeight;
 
         currentX = viewWidth / 2f;
         currentY = viewHeight * 5f / 6f;
@@ -54,12 +52,12 @@ public class ShipNode extends BaseNode implements ICollisionInvoker {
 
 //        currentX = currentX + speedWithRatio * currentVector.x;
         final float newX = currentX + (targetX - currentX) * speed;
-        if (newX <= viewWidth && newX >= 0)
+        if (newX <= pitchWidth && newX >= 0)
             currentX = newX;
         Log.d("CURRENT_X", "" + currentX);
 //        currentY = currentY + speedWithRatio * currentVector.y;
         final float newY = currentY - (currentY - targetY) * speed;
-        if (newY <= viewHeight && newY >= viewHeight / 3)
+        if (newY <= pitchHeight && newY >= pitchHeight / 3)
             currentY = newY;
         Log.d("CURRENT_Y", "" + currentY);
 

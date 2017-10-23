@@ -9,17 +9,19 @@ import android.graphics.RectF;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
-import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 
+import java.util.ArrayList;
+
+import pl.ogiba.spaceshooter.Engine.Nodes.ProjectileNode;
 import pl.ogiba.spaceshooter.Engine.Nodes.ShipNode;
 
 /**
  * Created by robertogiba on 23.10.2017.
  */
 
-public class GameThread extends Thread{
+public class GameThread extends Thread {
     private static final String TAG = "GameThread";
 
     private int canvasWidth = 1;
@@ -38,6 +40,7 @@ public class GameThread extends Thread{
     private IGameStateHolder gameState;
 
     private ShipNode shipNode;
+    private ArrayList<ProjectileNode> projectiles;
 
     private Bitmap shipBitmap;
 
@@ -46,6 +49,7 @@ public class GameThread extends Thread{
         this.context = context;
 
         this.shipNode = new ShipNode();
+        this.projectiles = new ArrayList<>();
     }
 
     public boolean isGameInStateReady() {
@@ -120,6 +124,7 @@ public class GameThread extends Thread{
                 case MotionEvent.ACTION_DOWN:
                 case MotionEvent.ACTION_POINTER_DOWN:
                     Log.d(TAG, "ACTION_DOWN");
+                    shoot();
                     break;
                 case MotionEvent.ACTION_MOVE:
                     shipNode.moveToPosition(event.getX(), event.getY());
@@ -137,9 +142,17 @@ public class GameThread extends Thread{
         return handled;
     }
 
+    private void shoot() {
+        final float xPos = shipNode.getCurrentPositionX() - ShipNode.SHIP_RADIUS / 2.0f;
+        final float yPos = shipNode.getCurrentPositionY() - ShipNode.SHIP_RADIUS / 2.0f;
+
+        projectiles.add(new ProjectileNode(xPos, yPos));
+    }
+
     private void doDraw(Canvas canvas) {
         canvas.drawColor(Color.BLUE);
         drawShip(canvas);
+        drawProjectiles(canvas);
     }
 
     private void drawShip(Canvas canvas) {
@@ -158,6 +171,12 @@ public class GameThread extends Thread{
         canvas.drawBitmap(shipBitmap, enterTheMatrix, null);
     }
 
+    private void drawProjectiles(Canvas canvas) {
+        for (ProjectileNode projectile : projectiles) {
+            canvas.drawRect(projectile.getRect(), projectile.getCurrentPaint());
+        }
+    }
+
     private void updatePhysics() {
         long now = System.currentTimeMillis();
 
@@ -167,7 +186,14 @@ public class GameThread extends Thread{
 
         double ratio = elapsed / 0.015d;
         shipNode.updatePosition(ratio);
+        updateProjectile(ratio);
         this.lastTime = now;
+    }
+
+    private void updateProjectile(double ratio) {
+        for (ProjectileNode projectile : projectiles) {
+            projectile.updatePosition(ratio);
+        }
     }
 
     public void setRunning(boolean isRunning) {
