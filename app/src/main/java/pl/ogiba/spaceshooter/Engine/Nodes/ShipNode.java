@@ -12,11 +12,14 @@ import pl.ogiba.spaceshooter.Engine.Utils.Vector2;
 
 public class ShipNode extends BaseNode implements ICollisionInvoker {
     public static final float SHIP_RADIUS = 30f;
-    public static final float DEFAULT_SPEED = 6f;
+    public static final float DEFAULT_SPEED = 0f;
 
     private float speed = DEFAULT_SPEED;
     private float viewWidth;
     private float viewHeight;
+
+    private float targetX;
+    private float targetY;
 
     public ShipNode() {
         currentVector = new Vector2(0.1f, 0.0f).normalize();
@@ -82,5 +85,9 @@ public class ShipNode extends BaseNode implements ICollisionInvoker {
     @Override
     public void updateSpeedWithRatio(float ratio) {
         this.speed = speed * ratio;
+    }
+
+    public void moveToPosition(float newX) {
+        this.currentX = newX;
     }
 }
