@@ -2,6 +2,7 @@ package pl.ogiba.spaceshooter.Engine;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.MotionEvent;
@@ -111,7 +112,7 @@ public class GameThread extends Thread {
     }
 
     private void doDraw(Canvas canvas) {
-
+        canvas.drawColor(Color.BLUE);
     }
 
     private void updatePhysics() {
