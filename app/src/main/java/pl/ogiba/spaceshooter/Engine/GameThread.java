@@ -119,16 +119,15 @@ public class GameThread extends Thread{
             switch (event.getAction() & MotionEvent.ACTION_MASK) {
                 case MotionEvent.ACTION_DOWN:
                 case MotionEvent.ACTION_POINTER_DOWN:
-//                    gestureDetector.onTouchEvent(event);
                     Log.d(TAG, "ACTION_DOWN");
                     break;
                 case MotionEvent.ACTION_MOVE:
-                    shipNode.moveToPosition(event.getX());
+                    shipNode.moveToPosition(event.getX(), event.getY());
                     break;
                 case MotionEvent.ACTION_UP:
                 case MotionEvent.ACTION_POINTER_UP:
                     Log.d(TAG, "ACTION_UP");
-                    shipNode.setSpeedDirectly(0f);
+                    shipNode.setDefaultSpeed();
                     break;
             }
         } else {
