@@ -1,12 +1,17 @@
 package pl.ogiba.spaceshooter.Engine;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
+import android.graphics.RectF;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
+
+import pl.ogiba.spaceshooter.Engine.Nodes.ShipNode;
 
 /**
  * Created by robertogiba on 23.10.2017.
@@ -27,9 +32,15 @@ public class GameThread extends Thread {
     private Context context;
     private IGameStateHolder gameState;
 
+    private ShipNode shipNode;
+
+    private Bitmap shipBitmap;
+
     public GameThread(SurfaceHolder surfaceHolder, Context context) {
         this.surfaceHolder = surfaceHolder;
         this.context = context;
+
+        this.shipNode = new ShipNode();
     }
 
     public boolean isGameInStateReady() {
@@ -113,6 +124,23 @@ public class GameThread extends Thread {
 
     private void doDraw(Canvas canvas) {
         canvas.drawColor(Color.BLUE);
+        drawShip(canvas);
+    }
+
+    private void drawShip(Canvas canvas) {
+        if (shipNode == null)
+            return;
+
+        RectF srcRect = new RectF(0, 0, shipBitmap.getWidth(), shipBitmap.getHeight());
+        RectF dstRect = new RectF((int) (shipNode.getCurrentX() - ShipNode.SHIP_RADIUS),
+                (int) (shipNode.getCurrentY() - ShipNode.SHIP_RADIUS),
+                (int) (shipNode.getCurrentX() + ShipNode.SHIP_RADIUS),
+                (int) (shipNode.getCurrentY() + ShipNode.SHIP_RADIUS));
+
+        Matrix enterTheMatrix = new Matrix();
+        enterTheMatrix.setRectToRect(srcRect, dstRect, Matrix.ScaleToFit.CENTER);
+
+        canvas.drawBitmap(shipBitmap, enterTheMatrix, null);
     }
 
     private void updatePhysics() {
@@ -123,7 +151,7 @@ public class GameThread extends Thread {
         double elapsed = (now - lastTime) / 1000.0;
 
         double ratio = elapsed / 0.015d;
-
+        shipNode.updatePosition(ratio);
         this.lastTime = now;
     }
 
@@ -137,6 +165,8 @@ public class GameThread extends Thread {
         synchronized (surfaceHolder) {
             this.canvasWidth = canvasWidth;
             this.canvasHeight = canvasHeight;
+
+            shipNode.setDefaultPosition(canvasWidth, canvasHeight);
         }
     }
 
@@ -158,5 +188,9 @@ public class GameThread extends Thread {
 
     public void setRefree(IGameStateHolder refree) {
         this.gameState = refree;
+    }
+
+    public void setShipBitmap(Bitmap shipBitmap) {
+        this.shipBitmap = shipBitmap;
     }
 }

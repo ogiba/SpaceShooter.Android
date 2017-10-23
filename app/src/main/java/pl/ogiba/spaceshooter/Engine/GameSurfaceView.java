@@ -1,10 +1,14 @@
 package pl.ogiba.spaceshooter.Engine;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
 import android.view.SurfaceHolder;
+
+import pl.ogiba.spaceshooter.R;
 
 /**
  * Created by robertogiba on 23.10.2017.
@@ -23,6 +27,8 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
         thread = new GameThread(holder, context);
 
         setFocusable(true);
+        final Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
+        thread.setShipBitmap(bitmap);
     }
 
     @Override
