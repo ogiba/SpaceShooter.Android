@@ -1,0 +1,56 @@
+package pl.ogiba.spaceshooter.Engine.Utils;
+
+/**
+ * Created by robertogiba on 23.10.2017.
+ */
+
+public abstract class BaseNode {
+    protected float currentX;
+    protected float currentY;
+
+    protected float pitchWidth;
+    protected float pitchHeight;
+
+    protected Vector2 currentVector;
+
+    public float getCurrentX() {
+        return currentX;
+    }
+
+    public void setCurrentX(float currentX) {
+        this.currentX = currentX;
+    }
+
+    public float getCurrentY() {
+        return currentY;
+    }
+
+    public void setCurrentY(float currentY) {
+        this.currentY = currentY;
+    }
+
+    public float getPitchWidth() {
+        return pitchWidth;
+    }
+
+    public void setPitchWidth(float pitchWidth) {
+        this.pitchWidth = pitchWidth;
+    }
+
+    public float getPitchHeight() {
+        return pitchHeight;
+    }
+
+    public void setPitchHeight(float pitchHeight) {
+        this.pitchHeight = pitchHeight;
+    }
+
+    public Vector2 getCurrentVector() {
+        return currentVector;
+    }
+
+    public void setCurrentVector(Vector2 currentVector) {
+        this.currentVector = currentVector;
+    }
+}
+
