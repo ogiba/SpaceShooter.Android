@@ -45,6 +45,11 @@ public abstract class BaseNode {
         this.pitchHeight = pitchHeight;
     }
 
+    public void setPitchSize(float pitchWidth, float pitchHeight) {
+        this.pitchWidth = pitchWidth;
+        this.pitchHeight = pitchHeight;
+    }
+
     public Vector2 getCurrentVector() {
         return currentVector;
     }
