@@ -30,6 +30,7 @@ public class GameSurfaceView extends SurfaceView
         setFocusable(true);
         final Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
         thread.setShipBitmap(bitmap);
+        thread.setOpponentBitmap(bitmap);
     }
 
     @Override

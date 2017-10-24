@@ -14,6 +14,7 @@ import android.view.SurfaceHolder;
 
 import java.util.ArrayList;
 
+import pl.ogiba.spaceshooter.Engine.Nodes.OpponentNode;
 import pl.ogiba.spaceshooter.Engine.Nodes.ProjectileNode;
 import pl.ogiba.spaceshooter.Engine.Nodes.ShipNode;
 
@@ -41,8 +42,10 @@ public class GameThread extends Thread {
 
     private ShipNode shipNode;
     private ArrayList<ProjectileNode> projectiles;
+    private ArrayList<OpponentNode> opponents;
 
     private Bitmap shipBitmap;
+    private Bitmap opponentBitmap;
 
     public GameThread(SurfaceHolder surfaceHolder, Context context) {
         this.surfaceHolder = surfaceHolder;
@@ -50,6 +53,9 @@ public class GameThread extends Thread {
 
         this.shipNode = new ShipNode();
         this.projectiles = new ArrayList<>();
+        this.opponents = new ArrayList<>();
+
+        generateOpponents();
     }
 
     public boolean isGameInStateReady() {
@@ -142,16 +148,10 @@ public class GameThread extends Thread {
         return handled;
     }
 
-    private void shoot() {
-        final float xPos = shipNode.getCurrentPositionX() - ShipNode.SHIP_RADIUS / 2.0f;
-        final float yPos = shipNode.getCurrentPositionY() - ShipNode.SHIP_RADIUS / 2.0f;
-
-        projectiles.add(new ProjectileNode(xPos, yPos));
-    }
-
     private void doDraw(Canvas canvas) {
         canvas.drawColor(Color.BLUE);
         drawShip(canvas);
+        drawOpponents(canvas);
         drawProjectiles(canvas);
     }
 
@@ -180,6 +180,20 @@ public class GameThread extends Thread {
         }
     }
 
+    private void drawOpponents(Canvas canvas) {
+        RectF srcRect = new RectF(0, 0, opponentBitmap.getWidth(), opponentBitmap.getHeight());
+
+        for (OpponentNode opponent : new ArrayList<>(opponents)) {
+            if (opponent.getRect().centerY() <= canvasHeight) {
+                Matrix matrix = new Matrix();
+                matrix.setRectToRect(srcRect, opponent.getRect(), Matrix.ScaleToFit.FILL);
+
+                canvas.drawBitmap(opponentBitmap, matrix, null);
+            } else
+                opponents.remove(opponent);
+        }
+    }
+
     private void updatePhysics() {
         long now = System.currentTimeMillis();
 
@@ -189,6 +203,7 @@ public class GameThread extends Thread {
 
         double ratio = elapsed / 0.015d;
         shipNode.updatePosition(ratio);
+        updateOpponents(ratio);
         updateProjectile(ratio);
         this.lastTime = now;
     }
@@ -196,6 +211,25 @@ public class GameThread extends Thread {
     private void updateProjectile(double ratio) {
         for (ProjectileNode projectile : projectiles) {
             projectile.updatePosition(ratio);
+        }
+    }
+
+    private void updateOpponents(double ratio) {
+        for (OpponentNode opponent : opponents) {
+            opponent.updatePosition(ratio);
+        }
+    }
+
+    private void shoot() {
+        final float xPos = shipNode.getCurrentPositionX() - ShipNode.SHIP_RADIUS / 2.0f;
+        final float yPos = shipNode.getCurrentPositionY() - ShipNode.SHIP_RADIUS / 2.0f;
+
+        projectiles.add(new ProjectileNode(xPos, yPos));
+    }
+
+    private void generateOpponents() {
+        for (int i = 0; i < 1; i++) {
+            opponents.add(new OpponentNode());
         }
     }
 
@@ -211,6 +245,13 @@ public class GameThread extends Thread {
             this.canvasHeight = canvasHeight;
 
             shipNode.setDefaultPosition(canvasWidth, canvasHeight);
+            updateOpponentSceneSize(canvasWidth, canvasHeight);
+        }
+    }
+
+    private void updateOpponentSceneSize(int width, int height){
+        for (OpponentNode opponent:opponents) {
+            opponent.setPitchSize(width, height);
         }
     }
 
@@ -236,5 +277,9 @@ public class GameThread extends Thread {
 
     public void setShipBitmap(Bitmap shipBitmap) {
         this.shipBitmap = shipBitmap;
+    }
+
+    public void setOpponentBitmap(Bitmap opponentBitmap) {
+        this.opponentBitmap = opponentBitmap;
     }
 }
