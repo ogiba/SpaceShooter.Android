@@ -1,9 +1,6 @@
 package pl.ogiba.spaceshooter.Engine.Nodes;
 
 import android.graphics.RectF;
-import android.util.Log;
-
-import java.util.Random;
 
 import pl.ogiba.spaceshooter.Engine.Utils.BaseNode;
 import pl.ogiba.spaceshooter.Engine.Utils.Collisions.ICollisionInterpreter;
@@ -16,14 +13,15 @@ import pl.ogiba.spaceshooter.Engine.Utils.Vector2;
 
 public class OpponentNode extends BaseNode implements ICollisionInterpreter {
     public static final float OPPONENT_RADIUS = 30f;
-    public static final float DEFAULT_SPEED = 1f;
+    public static final float DEFAULT_SPEED = 2f;
 
     private float speed = DEFAULT_SPEED;
 
     private RectF rect = new RectF();
+    private float directionDeterminant = 1;
 
     public OpponentNode() {
-        currentVector = new Vector2(0.1f, 0.1f).normalize();
+        currentVector = new Vector2(0.2f, 0.1f).normalize();
 
         generateNewPosition();
     }
@@ -56,7 +54,13 @@ public class OpponentNode extends BaseNode implements ICollisionInterpreter {
     }
 
     private void updateRect(RectF rect, float diffX, float diffY) {
-        float nextX = rect.left + diffX;
+        if (rect.right >= pitchWidth) {
+            directionDeterminant = -1;
+        } else if (rect.left <= 0) {
+            directionDeterminant = 1;
+        }
+
+        float nextX = rect.left + (diffX * directionDeterminant);
         float nextY = rect.top + diffY;
         rect.set(nextX, nextY, nextX + rect.width(), nextY + rect.height());
     }
