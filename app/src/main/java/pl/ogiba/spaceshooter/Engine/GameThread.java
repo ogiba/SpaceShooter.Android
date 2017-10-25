@@ -17,12 +17,13 @@ import java.util.ArrayList;
 import pl.ogiba.spaceshooter.Engine.Nodes.OpponentNode;
 import pl.ogiba.spaceshooter.Engine.Nodes.ProjectileNode;
 import pl.ogiba.spaceshooter.Engine.Nodes.ShipNode;
+import pl.ogiba.spaceshooter.Engine.Utils.Collisions.OnCollisionListener;
 
 /**
  * Created by robertogiba on 23.10.2017.
  */
 
-public class GameThread extends Thread {
+public class GameThread extends Thread implements OnCollisionListener {
     private static final String TAG = "GameThread";
 
     private int canvasWidth = 1;
@@ -213,7 +214,6 @@ public class GameThread extends Thread {
             projectile.updatePosition(ratio);
 
             if (projectile.checkForCollisions()) {
-                Log.i(TAG, "Targeted");
                 projectiles.remove(projectile);
             }
         }
@@ -236,8 +236,15 @@ public class GameThread extends Thread {
 
     private void generateOpponents() {
         for (int i = 0; i < 1; i++) {
-            opponents.add(new OpponentNode());
+            OpponentNode opponentNode = new OpponentNode();
+            opponentNode.setCollisionListener(this);
+            opponents.add(opponentNode);
         }
+    }
+
+    @Override
+    public void onOpponentCollision(OpponentNode node) {
+        opponents.remove(node);
     }
 
     public void setRunning(boolean isRunning) {

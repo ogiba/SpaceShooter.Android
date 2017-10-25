@@ -5,6 +5,7 @@ import android.graphics.RectF;
 import pl.ogiba.spaceshooter.Engine.Utils.BaseNode;
 import pl.ogiba.spaceshooter.Engine.Utils.Collisions.ICollisionInterpreter;
 import pl.ogiba.spaceshooter.Engine.Utils.Collisions.ICollisionInvoker;
+import pl.ogiba.spaceshooter.Engine.Utils.Collisions.OnCollisionListener;
 import pl.ogiba.spaceshooter.Engine.Utils.Vector2;
 
 /**
@@ -19,6 +20,7 @@ public class OpponentNode extends BaseNode implements ICollisionInterpreter {
 
     private RectF rect = new RectF();
     private float directionDeterminant = 1;
+    private OnCollisionListener callback;
 
     public OpponentNode() {
         currentVector = new Vector2(0.2f, 0.1f).normalize();
@@ -28,7 +30,12 @@ public class OpponentNode extends BaseNode implements ICollisionInterpreter {
 
     @Override
     public boolean checkForCollision(ICollisionInvoker invoker, Vector2 currentVector, float x, float y) {
-        return isCollision(x, y);
+        final boolean isInCollision = isCollision(x, y);
+
+        if (isInCollision)
+            callback.onOpponentCollision(this);
+
+        return isInCollision;
     }
 
     protected boolean isCollision(float x, float y) {
@@ -36,10 +43,10 @@ public class OpponentNode extends BaseNode implements ICollisionInterpreter {
     }
 
     private boolean isRectInCollision(RectF rect, float x, float y) {
-        return y - ProjectileNode.BASE_PROJECTILE_LENGTH < rect.bottom &&
-                x + ProjectileNode.BASE_PROJECTILE_THICKNESS > rect.left &&
-                y + ProjectileNode.BASE_PROJECTILE_LENGTH > rect.top &&
-                x - ProjectileNode.BASE_PROJECTILE_THICKNESS < rect.right;
+        return y < rect.bottom &&
+                x  > rect.left &&
+                y  > rect.top &&
+                x  < rect.right;
     }
 
     private void generateNewPosition() {
@@ -108,5 +115,9 @@ public class OpponentNode extends BaseNode implements ICollisionInterpreter {
 
     public RectF getRect() {
         return rect;
+    }
+
+    public void setCollisionListener(OnCollisionListener listener) {
+        this.callback = listener;
     }
 }
