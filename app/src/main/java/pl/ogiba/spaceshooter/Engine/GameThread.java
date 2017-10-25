@@ -55,8 +55,6 @@ public class GameThread extends Thread implements OnCollisionListener {
         this.shipNode = new ShipNode();
         this.projectiles = new ArrayList<>();
         this.opponents = new ArrayList<>();
-
-        generateOpponents();
     }
 
     public boolean isGameInStateReady() {
@@ -187,7 +185,7 @@ public class GameThread extends Thread implements OnCollisionListener {
         for (OpponentNode opponent : new ArrayList<>(opponents)) {
             if (opponent.getRect().centerY() <= canvasHeight) {
                 Matrix matrix = new Matrix();
-                matrix.setRectToRect(srcRect, opponent.getRect(), Matrix.ScaleToFit.FILL);
+                matrix.setRectToRect(srcRect, opponent.getRect(), Matrix.ScaleToFit.CENTER);
 
                 canvas.drawBitmap(opponentBitmap, matrix, null);
             } else
@@ -206,6 +204,8 @@ public class GameThread extends Thread implements OnCollisionListener {
         shipNode.updatePosition(ratio);
         updateOpponents(ratio);
         updateProjectile(ratio);
+
+        generateOpponents();
         this.lastTime = now;
     }
 
@@ -235,10 +235,13 @@ public class GameThread extends Thread implements OnCollisionListener {
     }
 
     private void generateOpponents() {
-        for (int i = 0; i < 1; i++) {
-            OpponentNode opponentNode = new OpponentNode();
-            opponentNode.setCollisionListener(this);
-            opponents.add(opponentNode);
+        if (opponents.size() < 10) {
+            for (int i = 0; i < 1; i++) {
+                OpponentNode opponentNode = new OpponentNode();
+                opponentNode.setCollisionListener(this);
+                opponentNode.setPitchSize(canvasWidth, canvasHeight);
+                opponents.add(opponentNode);
+            }
         }
     }
 
@@ -263,8 +266,8 @@ public class GameThread extends Thread implements OnCollisionListener {
         }
     }
 
-    private void updateOpponentSceneSize(int width, int height){
-        for (OpponentNode opponent:opponents) {
+    private void updateOpponentSceneSize(int width, int height) {
+        for (OpponentNode opponent : opponents) {
             opponent.setPitchSize(width, height);
         }
     }

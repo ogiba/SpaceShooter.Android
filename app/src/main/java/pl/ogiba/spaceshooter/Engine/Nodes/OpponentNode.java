@@ -1,6 +1,9 @@
 package pl.ogiba.spaceshooter.Engine.Nodes;
 
+import android.graphics.Interpolator;
 import android.graphics.RectF;
+
+import java.util.Random;
 
 import pl.ogiba.spaceshooter.Engine.Utils.BaseNode;
 import pl.ogiba.spaceshooter.Engine.Utils.Collisions.ICollisionInterpreter;
@@ -32,7 +35,7 @@ public class OpponentNode extends BaseNode implements ICollisionInterpreter {
     public boolean checkForCollision(ICollisionInvoker invoker, Vector2 currentVector, float x, float y) {
         final boolean isInCollision = isCollision(x, y);
 
-        if (isInCollision)
+        if (isInCollision && callback != null)
             callback.onOpponentCollision(this);
 
         return isInCollision;
@@ -44,23 +47,31 @@ public class OpponentNode extends BaseNode implements ICollisionInterpreter {
 
     private boolean isRectInCollision(RectF rect, float x, float y) {
         return y < rect.bottom &&
-                x  > rect.left &&
-                y  > rect.top &&
-                x  < rect.right;
+                x > rect.left &&
+                y > rect.top &&
+                x < rect.right;
     }
 
     private void generateNewPosition() {
         float newXPosition = generateNewXPosition();
 
-        rect.set(newXPosition,
-                0,
+        rect.set(newXPosition - OPPONENT_RADIUS,
+                0 - OPPONENT_RADIUS,
                 newXPosition + OPPONENT_RADIUS,
                 0 + OPPONENT_RADIUS);
     }
 
     private float generateNewXPosition() {
-        float random = (float) Math.random();
-        return OPPONENT_RADIUS * random;
+        final float randomValue;
+        if (pitchWidth > 0) {
+            final Random random = new Random();
+            final int maxValue = Math.round(pitchWidth);
+            randomValue = (float) random.nextInt(maxValue);
+        } else {
+            randomValue = (float) Math.random();
+        }
+
+        return randomValue;
     }
 
     public void setDefaultSpeed() {
@@ -119,5 +130,12 @@ public class OpponentNode extends BaseNode implements ICollisionInterpreter {
 
     public void setCollisionListener(OnCollisionListener listener) {
         this.callback = listener;
+    }
+
+    @Override
+    public void setPitchSize(float pitchWidth, float pitchHeight) {
+        super.setPitchSize(pitchWidth, pitchHeight);
+
+        generateNewPosition();
     }
 }
