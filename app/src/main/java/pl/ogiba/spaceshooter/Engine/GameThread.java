@@ -6,6 +6,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.RectF;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -30,6 +31,7 @@ public class GameThread extends Thread implements OnCollisionListener {
     private int canvasHeight = 1;
 
     private long lastTime;
+    private long startGeneratingTime;
 
     private GameState mode;
 
@@ -71,6 +73,7 @@ public class GameThread extends Thread implements OnCollisionListener {
 
     public void doStart() {
         synchronized (surfaceHolder) {
+            startGeneratingTime = System.currentTimeMillis() + 5000;
             lastTime = System.currentTimeMillis() + 100;
             setState(GameState.RUNNING);
         }
@@ -220,7 +223,7 @@ public class GameThread extends Thread implements OnCollisionListener {
     }
 
     private void updateOpponents(double ratio) {
-        for (OpponentNode opponent : opponents) {
+        for (OpponentNode opponent : new ArrayList<>(opponents)) {
             opponent.updatePosition(ratio);
         }
     }
@@ -235,13 +238,18 @@ public class GameThread extends Thread implements OnCollisionListener {
     }
 
     private void generateOpponents() {
-        if (opponents.size() < 10) {
-            for (int i = 0; i < 1; i++) {
-                OpponentNode opponentNode = new OpponentNode();
-                opponentNode.setCollisionListener(this);
-                opponentNode.setPitchSize(canvasWidth, canvasHeight);
-                opponents.add(opponentNode);
+        final long now = System.currentTimeMillis();
+        if (startGeneratingTime < now) {
+            if (opponents.size() < 10) {
+                for (int i = 0; i < 2; i++) {
+                    OpponentNode opponentNode = new OpponentNode();
+                    opponentNode.setCollisionListener(this);
+                    opponentNode.setPitchSize(canvasWidth, canvasHeight);
+                    opponents.add(opponentNode);
+                }
             }
+
+            this.startGeneratingTime = now + 5000;
         }
     }
 
