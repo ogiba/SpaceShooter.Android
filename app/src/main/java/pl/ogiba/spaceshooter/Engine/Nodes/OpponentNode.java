@@ -28,7 +28,18 @@ public class OpponentNode extends BaseNode implements ICollisionInterpreter {
 
     @Override
     public boolean checkForCollision(ICollisionInvoker invoker, Vector2 currentVector, float x, float y) {
-        return false;
+        return isCollision(x, y);
+    }
+
+    protected boolean isCollision(float x, float y) {
+        return isRectInCollision(rect, x, y);
+    }
+
+    private boolean isRectInCollision(RectF rect, float x, float y) {
+        return y - ProjectileNode.BASE_PROJECTILE_LENGTH < rect.bottom &&
+                x + ProjectileNode.BASE_PROJECTILE_THICKNESS > rect.left &&
+                y + ProjectileNode.BASE_PROJECTILE_LENGTH > rect.top &&
+                x - ProjectileNode.BASE_PROJECTILE_THICKNESS < rect.right;
     }
 
     private void generateNewPosition() {

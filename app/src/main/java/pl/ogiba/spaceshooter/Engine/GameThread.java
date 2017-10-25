@@ -209,8 +209,13 @@ public class GameThread extends Thread {
     }
 
     private void updateProjectile(double ratio) {
-        for (ProjectileNode projectile : projectiles) {
+        for (ProjectileNode projectile : new ArrayList<>(projectiles)) {
             projectile.updatePosition(ratio);
+
+            if (projectile.checkForCollisions()) {
+                Log.i(TAG, "Targeted");
+                projectiles.remove(projectile);
+            }
         }
     }
 
@@ -224,7 +229,9 @@ public class GameThread extends Thread {
         final float xPos = shipNode.getCurrentPositionX() - ShipNode.SHIP_RADIUS / 2.0f;
         final float yPos = shipNode.getCurrentPositionY() - ShipNode.SHIP_RADIUS / 2.0f;
 
-        projectiles.add(new ProjectileNode(xPos, yPos));
+        ProjectileNode projectile = new ProjectileNode(xPos, yPos);
+        projectile.addColissionables(opponents);
+        projectiles.add(projectile);
     }
 
     private void generateOpponents() {
