@@ -1,6 +1,8 @@
 package pl.ogiba.spaceshooter.Engine.Utils.Collisions;
 
 
+import android.graphics.RectF;
+
 import pl.ogiba.spaceshooter.Engine.Utils.Vector2;
 
 /**
@@ -8,4 +10,6 @@ import pl.ogiba.spaceshooter.Engine.Utils.Vector2;
  */
 public interface ICollisionInterpreter {
     boolean checkForCollision(ICollisionInvoker invoker, Vector2 currentVector, float x, float y);
+
+    boolean checkForCollision(ICollisionInvoker invoker, Vector2 currentVector, RectF sourceRect);
 }

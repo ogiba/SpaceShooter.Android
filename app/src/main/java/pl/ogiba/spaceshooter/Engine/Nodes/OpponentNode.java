@@ -41,6 +41,16 @@ public class OpponentNode extends BaseNode implements ICollisionInterpreter {
         return isInCollision;
     }
 
+    @Override
+    public boolean checkForCollision(ICollisionInvoker invoker, Vector2 currentVector, RectF sourceRect) {
+        final boolean isInCollision = isRectInCollision(sourceRect, rect);
+
+        if (isInCollision && callback != null)
+            callback.onOpponentCollision(this);
+
+        return isInCollision;
+    }
+
     protected boolean isCollision(float x, float y) {
         return isRectInCollision(rect, x, y);
     }
@@ -50,6 +60,10 @@ public class OpponentNode extends BaseNode implements ICollisionInterpreter {
                 x > rect.left &&
                 y > rect.top &&
                 x < rect.right;
+    }
+
+    private boolean isRectInCollision(RectF rect, RectF destRect) {
+        return rect.intersect(destRect);
     }
 
     private void generateNewPosition() {
