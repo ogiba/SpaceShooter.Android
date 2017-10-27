@@ -1,6 +1,5 @@
 package pl.ogiba.spaceshooter.Engine.Nodes;
 
-import android.graphics.Interpolator;
 import android.graphics.RectF;
 
 import java.util.Random;
@@ -23,7 +22,7 @@ public class OpponentNode extends BaseNode implements ICollisionInterpreter {
 
     private RectF rect = new RectF();
     private float directionDeterminant = 1;
-    private OnCollisionListener callback;
+    private boolean isDestroyed = false;
 
     public OpponentNode() {
         currentVector = new Vector2(0.2f, 0.1f).normalize();
@@ -33,20 +32,17 @@ public class OpponentNode extends BaseNode implements ICollisionInterpreter {
 
     @Override
     public boolean checkForCollision(ICollisionInvoker invoker, Vector2 currentVector, float x, float y) {
-        final boolean isInCollision = isCollision(x, y);
-
-        if (isInCollision && callback != null)
-            callback.onOpponentCollision(this);
-
-        return isInCollision;
+        return isCollision(x, y);
     }
 
     @Override
     public boolean checkForCollision(ICollisionInvoker invoker, Vector2 currentVector, RectF sourceRect) {
         final boolean isInCollision = isRectInCollision(sourceRect, rect);
 
-        if (isInCollision && callback != null)
-            callback.onOpponentCollision(this);
+        if (isInCollision) {
+//            callback.onOpponentCollision(this);
+            this.isDestroyed = true;
+        }
 
         return isInCollision;
     }
@@ -142,14 +138,14 @@ public class OpponentNode extends BaseNode implements ICollisionInterpreter {
         return rect;
     }
 
-    public void setCollisionListener(OnCollisionListener listener) {
-        this.callback = listener;
-    }
-
     @Override
     public void setPitchSize(float pitchWidth, float pitchHeight) {
         super.setPitchSize(pitchWidth, pitchHeight);
 
         generateNewPosition();
+    }
+
+    public boolean isDestroyed() {
+        return isDestroyed;
     }
 }

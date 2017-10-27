@@ -6,7 +6,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.RectF;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -18,13 +17,12 @@ import java.util.ArrayList;
 import pl.ogiba.spaceshooter.Engine.Nodes.OpponentNode;
 import pl.ogiba.spaceshooter.Engine.Nodes.ProjectileNode;
 import pl.ogiba.spaceshooter.Engine.Nodes.ShipNode;
-import pl.ogiba.spaceshooter.Engine.Utils.Collisions.OnCollisionListener;
 
 /**
  * Created by robertogiba on 23.10.2017.
  */
 
-public class GameThread extends Thread implements OnCollisionListener {
+public class GameThread extends Thread {
     private static final String TAG = "GameThread";
 
     private int canvasWidth = 1;
@@ -224,7 +222,10 @@ public class GameThread extends Thread implements OnCollisionListener {
 
     private void updateOpponents(double ratio) {
         for (OpponentNode opponent : new ArrayList<>(opponents)) {
-            opponent.updatePosition(ratio);
+            if (opponent.isDestroyed())
+                opponents.remove(opponent);
+            else
+                opponent.updatePosition(ratio);
         }
     }
 
@@ -243,7 +244,6 @@ public class GameThread extends Thread implements OnCollisionListener {
             if (opponents.size() < 10) {
                 for (int i = 0; i < 2; i++) {
                     OpponentNode opponentNode = new OpponentNode();
-                    opponentNode.setCollisionListener(this);
                     opponentNode.setPitchSize(canvasWidth, canvasHeight);
                     opponents.add(opponentNode);
                 }
@@ -251,11 +251,6 @@ public class GameThread extends Thread implements OnCollisionListener {
 
             this.startGeneratingTime = now + 5000;
         }
-    }
-
-    @Override
-    public void onOpponentCollision(OpponentNode node) {
-        opponents.remove(node);
     }
 
     public void setRunning(boolean isRunning) {

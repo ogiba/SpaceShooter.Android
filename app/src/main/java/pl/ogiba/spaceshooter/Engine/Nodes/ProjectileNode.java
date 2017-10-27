@@ -58,7 +58,6 @@ public class ProjectileNode extends PaintNode {
 
     public boolean checkForCollisions() {
         for (int i = 0; i < collisionables.size(); i++) {
-//            final float projectileHeadPos = rect.centerY() - BASE_PROJECTILE_LENGTH / 2.0f;
 
             if (collisionables.get(i).checkForCollision(null,
                     currentVector,
