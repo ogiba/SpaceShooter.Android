@@ -7,7 +7,6 @@ import java.util.Random;
 import pl.ogiba.spaceshooter.Engine.Utils.BaseNode;
 import pl.ogiba.spaceshooter.Engine.Utils.Collisions.ICollisionInterpreter;
 import pl.ogiba.spaceshooter.Engine.Utils.Collisions.ICollisionInvoker;
-import pl.ogiba.spaceshooter.Engine.Utils.Collisions.OnCollisionListener;
 import pl.ogiba.spaceshooter.Engine.Utils.Vector2;
 
 /**

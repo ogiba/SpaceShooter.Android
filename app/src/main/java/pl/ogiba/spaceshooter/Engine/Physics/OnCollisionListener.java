@@ -1,4 +1,4 @@
-package pl.ogiba.spaceshooter.Engine.Utils.Collisions;
+package pl.ogiba.spaceshooter.Engine.Physics;
 
 import pl.ogiba.spaceshooter.Engine.Nodes.OpponentNode;
 
@@ -7,5 +7,5 @@ import pl.ogiba.spaceshooter.Engine.Nodes.OpponentNode;
  */
 
 public interface OnCollisionListener {
-    void onOpponentCollision(OpponentNode node);
+    void onCollision(Body source, Body dest);
 }
