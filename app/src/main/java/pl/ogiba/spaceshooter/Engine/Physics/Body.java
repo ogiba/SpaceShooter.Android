@@ -3,6 +3,7 @@ package pl.ogiba.spaceshooter.Engine.Physics;
 import android.graphics.RectF;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import pl.ogiba.spaceshooter.Engine.Utils.Vector2;
 
@@ -15,6 +16,8 @@ public class Body {
     private World world;
     private Vector2 velocity;
 
+    private Object data;
+
     private boolean isDestroyed;
 
     public Body(World world) {
@@ -23,8 +26,8 @@ public class Body {
         this.velocity = new Vector2(0f, 0f);
     }
 
-    public void update() {
-        this.setPosition(Vector2.add(getPosition(), velocity));
+    public void update(float ratio) {
+        this.setPosition(Vector2.add(getPosition(), Vector2.multiply(velocity, ratio)));
     }
 
     public void destroy() {
@@ -71,5 +74,13 @@ public class Body {
 
     public Vector2 getVelocity() {
         return velocity;
+    }
+
+    public Object getData() {
+        return data;
+    }
+
+    public void setData(Object data) {
+        this.data = data;
     }
 }

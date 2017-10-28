@@ -1,17 +1,22 @@
 package pl.ogiba.spaceshooter.Engine.Nodes;
 
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Matrix;
+import android.graphics.RectF;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
+import pl.ogiba.spaceshooter.Engine.Physics.World;
 import pl.ogiba.spaceshooter.Engine.Utils.BaseNode;
-import pl.ogiba.spaceshooter.Engine.Utils.Collisions.ICollisionInvoker;
 import pl.ogiba.spaceshooter.Engine.Utils.Vector2;
 
 /**
  * Created by robertogiba on 23.10.2017.
  */
 
-public class ShipNode extends BaseNode implements ICollisionInvoker {
-    public static final float SHIP_RADIUS = 30f;
+public class ShipNode extends BaseNode {
+    public static final float SHIP_RADIUS = 80f;
     public static final float DEFAULT_SPEED = 0f;
 
     private float speed = DEFAULT_SPEED;
@@ -19,80 +24,72 @@ public class ShipNode extends BaseNode implements ICollisionInvoker {
     private float targetX;
     private float targetY;
 
-    public ShipNode() {
-        currentVector = new Vector2(0.1f, 0.0f).normalize();
+    @Nullable
+    private Bitmap shipBitmap;
+
+    public ShipNode(World world) {
+        super(world);
+
+        body.setRect(new RectF(0, 0, SHIP_RADIUS, SHIP_RADIUS));
     }
 
     public void setDefaultPosition(float viewWidth, float viewHeight) {
         this.pitchWidth = viewWidth;
         this.pitchHeight = viewHeight;
 
-        currentX = viewWidth / 2f;
-        currentY = viewHeight * 5f / 6f;
+        body.setPosition(new Vector2(viewWidth / 2f, viewHeight * 5f / 6f));
     }
 
     public void setDefaultSpeed() {
         speed = DEFAULT_SPEED;
     }
 
-    @Override
-    public void updateVector(Vector2 angle) {
-        this.currentVector = angle;
-    }
 
-    @Override
-    public void updatePositionDirectly(float newX, float newY) {
-        this.currentX = newX;
-        this.currentY = newY;
-    }
-
-    @Override
     public void updatePosition(double ratio) {
+        float currentX = body.getPosition().x;
+        float currentY = body.getPosition().y;
+
         float speedWithRatio = speed * (float) ratio;
 
-//        currentX = currentX + speedWithRatio * currentVector.x;
         final float newX = currentX + (targetX - currentX) * speed;
         if (newX <= pitchWidth && newX >= 0)
             currentX = newX;
         Log.d("CURRENT_X", "" + currentX);
-//        currentY = currentY + speedWithRatio * currentVector.y;
+
         final float newY = currentY - (currentY - targetY) * speed;
         if (newY <= pitchHeight && newY >= pitchHeight / 3)
             currentY = newY;
         Log.d("CURRENT_Y", "" + currentY);
 
-        currentVector.x += ratio;
-        currentVector.normalize();
+        body.setPosition(new Vector2(currentX, currentY));
     }
 
     @Override
-    public float getCurrentPositionX() {
-        return currentX;
+    public void update(float ratio) {
+
     }
 
     @Override
-    public float getCurrentPositionY() {
-        return currentY;
-    }
+    public void draw(Canvas canvas) {
+        if (shipBitmap == null)
+            return;
 
-    @Override
-    public float getCurrentSpeed() {
-        return speed;
-    }
+        RectF srcRect = new RectF(0, 0, shipBitmap.getWidth(), shipBitmap.getHeight());
+        RectF dstRect = body.getRect();
 
-    @Override
-    public void setSpeedDirectly(float speed) {
-        this.speed = speed;
-    }
+        Matrix enterTheMatrix = new Matrix();
+        enterTheMatrix.setRectToRect(srcRect, dstRect, Matrix.ScaleToFit.CENTER);
 
-    @Override
-    public void updateSpeedWithRatio(float ratio) {
-        this.speed = speed * ratio;
+        canvas.drawBitmap(shipBitmap, enterTheMatrix, null);
     }
 
     public void moveToPosition(float newX, float newY) {
         this.speed = 0.1f;
         this.targetX = newX;
         this.targetY = newY;
+    }
+
+    public void setShipBitmap(@Nullable Bitmap shipBitmap) {
+        this.shipBitmap = shipBitmap;
     }
 }

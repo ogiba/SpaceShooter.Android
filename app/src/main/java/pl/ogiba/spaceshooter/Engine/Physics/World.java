@@ -17,10 +17,10 @@ public class World {
         this.items = new ArrayList<>();
     }
 
-    public void update() {
+    public void update(float ratio) {
         for (int i = 0; i < items.size(); i++) {
             final Body item = items.get(i);
-            item.update();
+            item.update(ratio);
 
             checkCollisionsWithItems(i);
 
@@ -48,7 +48,7 @@ public class World {
         collisionCallback.onCollision(source, dest);
     }
 
-    private Body createBody() {
+    public Body createBody() {
         final Body body = new Body(this);
         items.add(body);
         return body;

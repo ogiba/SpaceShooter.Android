@@ -1,32 +1,23 @@
 package pl.ogiba.spaceshooter.Engine.Utils;
 
+import android.graphics.Canvas;
+
+import pl.ogiba.spaceshooter.Engine.Physics.Body;
+import pl.ogiba.spaceshooter.Engine.Physics.World;
+
 /**
  * Created by robertogiba on 23.10.2017.
  */
 
 public abstract class BaseNode {
-    protected float currentX;
-    protected float currentY;
-
     protected float pitchWidth;
     protected float pitchHeight;
 
-    protected Vector2 currentVector;
+    protected Body body;
 
-    public float getCurrentX() {
-        return currentX;
-    }
-
-    public void setCurrentX(float currentX) {
-        this.currentX = currentX;
-    }
-
-    public float getCurrentY() {
-        return currentY;
-    }
-
-    public void setCurrentY(float currentY) {
-        this.currentY = currentY;
+    public BaseNode(World world) {
+        this.body = world.createBody();
+        body.setData(this);
     }
 
     public float getPitchWidth() {
@@ -50,12 +41,17 @@ public abstract class BaseNode {
         this.pitchHeight = pitchHeight;
     }
 
-    public Vector2 getCurrentVector() {
-        return currentVector;
+    public float getCurrentPositionX() {
+        return body.getPosition().x;
     }
 
-    public void setCurrentVector(Vector2 currentVector) {
-        this.currentVector = currentVector;
+
+    public float getCurrentPositionY() {
+        return body.getPosition().y;
     }
+
+    public abstract void update(float ratio);
+
+    public abstract void draw(Canvas canvas);
 }
 

@@ -3,18 +3,21 @@ package pl.ogiba.spaceshooter.Engine.Utils;
 import android.graphics.Color;
 import android.graphics.Paint;
 
+import pl.ogiba.spaceshooter.Engine.Physics.World;
+
 /**
  * Created by robertogiba on 23.10.2017.
  */
 
-public class PaintNode extends BaseNode {
+public abstract class PaintNode extends BaseNode {
     protected Paint currentPaint;
 
-    public PaintNode() {
-        this(Color.BLACK);
+    public PaintNode(World world) {
+        this(world ,Color.BLACK);
     }
 
-    public PaintNode(int color) {
+    public PaintNode(World world, int color) {
+        super(world);
         currentPaint = new Paint();
         currentPaint.setColor(color);
     }

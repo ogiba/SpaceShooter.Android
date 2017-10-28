@@ -1,73 +1,43 @@
 package pl.ogiba.spaceshooter.Engine.Nodes;
 
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Matrix;
 import android.graphics.RectF;
+import android.support.annotation.Nullable;
 
+import java.util.ArrayList;
 import java.util.Random;
 
+import pl.ogiba.spaceshooter.Engine.Physics.World;
 import pl.ogiba.spaceshooter.Engine.Utils.BaseNode;
-import pl.ogiba.spaceshooter.Engine.Utils.Collisions.ICollisionInterpreter;
-import pl.ogiba.spaceshooter.Engine.Utils.Collisions.ICollisionInvoker;
 import pl.ogiba.spaceshooter.Engine.Utils.Vector2;
 
 /**
  * Created by robertogiba on 24.10.2017.
  */
 
-public class OpponentNode extends BaseNode implements ICollisionInterpreter {
+public class OpponentNode extends BaseNode {
     public static final float OPPONENT_RADIUS = 30f;
     public static final float DEFAULT_SPEED = 2f;
 
     private float speed = DEFAULT_SPEED;
 
-    private RectF rect = new RectF();
     private float directionDeterminant = 1;
-    private boolean isDestroyed = false;
+    @Nullable
+    private Bitmap opponentBitmap;
 
-    public OpponentNode() {
-        currentVector = new Vector2(0.2f, 0.1f).normalize();
+    public OpponentNode(World world) {
+        super(world);
 
+        this.body.setRect(new RectF(0, 0, OPPONENT_RADIUS, OPPONENT_RADIUS));
         generateNewPosition();
-    }
-
-    @Override
-    public boolean checkForCollision(ICollisionInvoker invoker, Vector2 currentVector, float x, float y) {
-        return isCollision(x, y);
-    }
-
-    @Override
-    public boolean checkForCollision(ICollisionInvoker invoker, Vector2 currentVector, RectF sourceRect) {
-        final boolean isInCollision = isRectInCollision(sourceRect, rect);
-
-        if (isInCollision) {
-//            callback.onOpponentCollision(this);
-            this.isDestroyed = true;
-        }
-
-        return isInCollision;
-    }
-
-    protected boolean isCollision(float x, float y) {
-        return isRectInCollision(rect, x, y);
-    }
-
-    private boolean isRectInCollision(RectF rect, float x, float y) {
-        return y < rect.bottom &&
-                x > rect.left &&
-                y > rect.top &&
-                x < rect.right;
-    }
-
-    private boolean isRectInCollision(RectF rect, RectF destRect) {
-        return rect.intersect(destRect);
     }
 
     private void generateNewPosition() {
         float newXPosition = generateNewXPosition();
 
-        rect.set(newXPosition - OPPONENT_RADIUS,
-                0 - OPPONENT_RADIUS,
-                newXPosition + OPPONENT_RADIUS,
-                0 + OPPONENT_RADIUS);
+        body.setPosition(new Vector2(newXPosition, 0 - body.getHeigth()));
     }
 
     private float generateNewXPosition() {
@@ -81,14 +51,6 @@ public class OpponentNode extends BaseNode implements ICollisionInterpreter {
         }
 
         return randomValue;
-    }
-
-    public void setDefaultSpeed() {
-        speed = DEFAULT_SPEED;
-    }
-
-    public void updateVector(Vector2 angle) {
-        this.currentVector = angle;
     }
 
     private void updateRect(RectF rect, float diffX, float diffY) {
@@ -121,20 +83,23 @@ public class OpponentNode extends BaseNode implements ICollisionInterpreter {
 //        currentVector.normalize();
 //    }
 
-    public void updatePosition(double ratio) {
-        float speedWithRatio = speed * (float) ratio;
-        float diffX = speedWithRatio * currentVector.x;
-        float diffY = speedWithRatio * currentVector.y;
+    @Override
+    public void update(float ratio) {
 
-        updateRect(rect, diffX, diffY);
-
-//        if (rect.right < 0) {
-//            generateNewPosition();
-//        }
     }
 
-    public RectF getRect() {
-        return rect;
+    @Override
+    public void draw(Canvas canvas) {
+        if (opponentBitmap == null)
+            return;
+
+        final RectF srcRect = new RectF(0, 0, opponentBitmap.getWidth(), opponentBitmap.getHeight());
+
+//            if (opponent.getRect().centerY() <= canvasHeight) {
+        Matrix matrix = new Matrix();
+        matrix.setRectToRect(srcRect, body.getRect(), Matrix.ScaleToFit.CENTER);
+
+        canvas.drawBitmap(opponentBitmap, matrix, null);
     }
 
     @Override
@@ -144,7 +109,7 @@ public class OpponentNode extends BaseNode implements ICollisionInterpreter {
         generateNewPosition();
     }
 
-    public boolean isDestroyed() {
-        return isDestroyed;
+    public void setOpponentBitmap(@Nullable Bitmap opponentBitmap) {
+        this.opponentBitmap = opponentBitmap;
     }
 }
