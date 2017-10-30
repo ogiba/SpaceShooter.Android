@@ -164,12 +164,10 @@ public class GameThread extends Thread {
         double elapsed = (now - lastTime) / 1000.0;
 
         double ratio = elapsed / 0.015d;
-//        shipNode.updatePosition(ratio);
-//        updateOpponents(ratio);
-//        updateProjectile(ratio);
+
         world.update((float) ratio);
-        for (Body wordItem : world.getItems()) {
-            final BaseNode node = (BaseNode) wordItem.getData();
+        for (int i = 0; i < world.getItems().size(); i++) {
+            final BaseNode node = (BaseNode) world.getItems().get(i).getData();
             node.update((float) ratio);
         }
 

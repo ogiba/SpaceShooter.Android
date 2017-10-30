@@ -51,22 +51,29 @@ public class ShipNode extends BaseNode {
 
         float speedWithRatio = speed * (float) ratio;
 
-        final float newX = currentX + (targetX - currentX) * speed;
-        if (newX <= pitchWidth && newX >= 0)
-            currentX = newX;
+        final float newX;
+        if (currentX <= pitchWidth && currentX >= 0)
+//            currentX = newX;
+            newX = currentX + (targetX - currentX) * speed;
+        else
+            newX = 0;
         Log.d("CURRENT_X", "" + currentX);
 
-        final float newY = currentY - (currentY - targetY) * speed;
-        if (newY <= pitchHeight && newY >= pitchHeight / 3)
-            currentY = newY;
+
+        final float newY;
+        if (currentY <= pitchHeight && currentY >= pitchHeight / 3)
+//            currentY = newY;
+            newY = currentY - (currentY - targetY) * speed;
+        else
+            newY = 0;
         Log.d("CURRENT_Y", "" + currentY);
 
-        body.setPosition(new Vector2(currentX, currentY));
+        body.setPosition(new Vector2(newX, newY));
     }
 
     @Override
     public void update(float ratio) {
-
+        updatePosition(ratio);
     }
 
     @Override
@@ -91,5 +98,9 @@ public class ShipNode extends BaseNode {
 
     public void setShipBitmap(@Nullable Bitmap shipBitmap) {
         this.shipBitmap = shipBitmap;
+    }
+
+    public float getCenterX() {
+        return body.getPosition().x + SHIP_RADIUS / 2.0f;
     }
 }

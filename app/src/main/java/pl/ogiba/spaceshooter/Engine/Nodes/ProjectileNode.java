@@ -25,10 +25,11 @@ public class ProjectileNode extends PaintNode {
     public ProjectileNode(ShipNode shipNode, World world) {
         super(world, Color.YELLOW);
 
-        this.originXPos = shipNode.getCurrentPositionX() + BASE_PROJECTILE_THICKNESS;
+        this.originXPos = shipNode.getCenterX() - BASE_PROJECTILE_THICKNESS / 2.0f;
         this.originYPos = shipNode.getCurrentPositionY() - BASE_PROJECTILE_LENGTH;
 
         body.setRect(new RectF(0, 0, BASE_PROJECTILE_THICKNESS, BASE_PROJECTILE_LENGTH));
+        body.setVelocity(new Vector2(0.0f, -6f));
 
         generateNewPosition();
     }

@@ -45,7 +45,6 @@ public abstract class BaseNode {
         return body.getPosition().x;
     }
 
-
     public float getCurrentPositionY() {
         return body.getPosition().y;
     }
