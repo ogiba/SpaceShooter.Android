@@ -189,7 +189,7 @@ public class GameThread extends Thread {
                 for (int i = 0; i < 2; i++) {
                     numberOfOpponents++;
                     OpponentNode opponentNode = new OpponentNode(world);
-
+                    opponentNode.setOpponentBitmap(opponentBitmap);
                     opponentNode.setPitchSize(canvasWidth, canvasHeight);
                 }
             }
@@ -210,17 +210,6 @@ public class GameThread extends Thread {
             this.canvasHeight = canvasHeight;
 
             shipNode.setDefaultPosition(canvasWidth, canvasHeight);
-            updateOpponentSceneSize(canvasWidth, canvasHeight);
-        }
-    }
-
-    private void updateOpponentSceneSize(int width, int height) {
-        for (Body worldItem : world.getItems()) {
-            if (worldItem.getData() instanceof OpponentNode) {
-                final OpponentNode opponent = (OpponentNode) worldItem.getData();
-                opponent.setOpponentBitmap(opponentBitmap);
-                opponent.setPitchSize(width, height);
-            }
         }
     }
 

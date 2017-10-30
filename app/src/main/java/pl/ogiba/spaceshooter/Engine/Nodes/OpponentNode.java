@@ -18,7 +18,7 @@ import pl.ogiba.spaceshooter.Engine.Utils.Vector2;
  */
 
 public class OpponentNode extends BaseNode {
-    public static final float OPPONENT_RADIUS = 30f;
+    public static final float OPPONENT_RADIUS = 80f;
     public static final float DEFAULT_SPEED = 2f;
 
     private float speed = DEFAULT_SPEED;
@@ -31,6 +31,7 @@ public class OpponentNode extends BaseNode {
         super(world);
 
         this.body.setRect(new RectF(0, 0, OPPONENT_RADIUS, OPPONENT_RADIUS));
+        this.body.setVelocity(new Vector2(1.0f, 3.0f));
         generateNewPosition();
     }
 

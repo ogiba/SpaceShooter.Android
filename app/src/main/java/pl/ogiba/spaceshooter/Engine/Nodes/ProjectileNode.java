@@ -15,7 +15,7 @@ import pl.ogiba.spaceshooter.Engine.Utils.Vector2;
  */
 
 public class ProjectileNode extends PaintNode {
-    public static final float DEFAULT_SPEED = 5f;
+    public static final float DEFAULT_SPEED = 6f;
     public static final float BASE_PROJECTILE_THICKNESS = 10f;
     public static final float BASE_PROJECTILE_LENGTH = 100f;
 
@@ -29,7 +29,7 @@ public class ProjectileNode extends PaintNode {
         this.originYPos = shipNode.getCurrentPositionY() - BASE_PROJECTILE_LENGTH;
 
         body.setRect(new RectF(0, 0, BASE_PROJECTILE_THICKNESS, BASE_PROJECTILE_LENGTH));
-        body.setVelocity(new Vector2(0.0f, -6f));
+        body.setVelocity(new Vector2(0.0f, -DEFAULT_SPEED));
 
         generateNewPosition();
     }
