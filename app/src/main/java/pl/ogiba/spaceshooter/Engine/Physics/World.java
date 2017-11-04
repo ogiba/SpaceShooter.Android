@@ -1,6 +1,8 @@
 package pl.ogiba.spaceshooter.Engine.Physics;
 
+import android.graphics.RectF;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.util.Size;
 
 import java.util.ArrayList;
@@ -10,6 +12,7 @@ import java.util.ArrayList;
  */
 
 public class World {
+    private static final String TAG = "World";
     private ArrayList<Body> items;
     @Nullable
     private OnCollisionListener collisionCallback;
@@ -25,11 +28,11 @@ public class World {
             item.update(ratio);
 
             checkCollisionsWithItems(i);
-//
-//            if (item.isDestroyed()) {
-//                items.remove(i);
-//                i--;
-//            }
+
+            if (item.isDestroyed()) {
+                items.remove(i);
+                i--;
+            }
         }
     }
 
@@ -38,7 +41,7 @@ public class World {
         for (int j = position + 1; j < items.size(); j++) {
             final Body item2 = items.get(j);
 
-            if (item2.getRect().intersect(item1.getRect()))
+            if (RectF.intersects(item1.getRect(), item2.getRect()))
                 invokeCollisionCallback(item1, item2);
         }
     }

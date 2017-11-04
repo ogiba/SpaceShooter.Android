@@ -3,9 +3,6 @@ package pl.ogiba.spaceshooter.Engine.Physics;
 import android.graphics.RectF;
 import android.util.Size;
 
-import java.util.ArrayList;
-import java.util.Objects;
-
 import pl.ogiba.spaceshooter.Engine.Utils.Vector2;
 
 /**
