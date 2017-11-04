@@ -2,7 +2,6 @@ package pl.ogiba.spaceshooter.Engine.Physics;
 
 import android.graphics.RectF;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.util.Size;
 
 import java.util.ArrayList;
@@ -14,8 +13,13 @@ import java.util.ArrayList;
 public class World {
     private static final String TAG = "World";
     private ArrayList<Body> items;
+
     @Nullable
     private OnCollisionListener collisionCallback;
+
+    @Nullable
+    private OnWorldBehaviorListener worldBehaviorCallback;
+
     private Size boundaries;
 
     public World() {
@@ -28,6 +32,8 @@ public class World {
             item.update(ratio);
 
             checkCollisionsWithItems(i);
+
+            checkItemPositionInWorld(item);
 
             if (item.isDestroyed()) {
                 items.remove(i);
@@ -53,6 +59,21 @@ public class World {
         collisionCallback.onCollision(source, dest);
     }
 
+    private void checkItemPositionInWorld(Body item) {
+        if (worldBehaviorCallback == null)
+            return;
+
+        if (item.getRect().right >= boundaries.getWidth())
+            worldBehaviorCallback.onReachedEdge(item, WorldEdges.RIGHT);
+        else if (item.getRect().left <= 0)
+            worldBehaviorCallback.onReachedEdge(item, WorldEdges.LEFT);
+        else if (item.getRect().top <= -60)
+            worldBehaviorCallback.onReachedEdge(item, WorldEdges.TOP);
+        else if (item.getRect().bottom >= boundaries.getHeight())
+            worldBehaviorCallback.onReachedEdge(item, WorldEdges.BOTTOM);
+
+    }
+
     public Body createBody() {
         final Body body = new Body(this);
         items.add(body);
@@ -63,8 +84,12 @@ public class World {
         return items;
     }
 
-    public void setCollisionCallback(@Nullable OnCollisionListener collisionCallback) {
-        this.collisionCallback = collisionCallback;
+    public void setCollisionCallback(@Nullable OnCollisionListener collisionListener) {
+        this.collisionCallback = collisionListener;
+    }
+
+    public void setWorldBehaviorCallback(@Nullable OnWorldBehaviorListener worldBehaviorListener) {
+        this.worldBehaviorCallback = worldBehaviorListener;
     }
 
     public void setBoundaries(Size boundaries) {

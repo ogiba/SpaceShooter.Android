@@ -11,20 +11,21 @@ import android.util.Size;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 
-import java.util.ArrayList;
-
 import pl.ogiba.spaceshooter.Engine.Nodes.OpponentNode;
 import pl.ogiba.spaceshooter.Engine.Nodes.ProjectileNode;
 import pl.ogiba.spaceshooter.Engine.Nodes.ShipNode;
 import pl.ogiba.spaceshooter.Engine.Physics.Body;
+import pl.ogiba.spaceshooter.Engine.Physics.OnWorldBehaviorListener;
 import pl.ogiba.spaceshooter.Engine.Physics.World;
+import pl.ogiba.spaceshooter.Engine.Physics.WorldEdges;
 import pl.ogiba.spaceshooter.Engine.Utils.BaseNode;
+import pl.ogiba.spaceshooter.Engine.Utils.Vector2;
 
 /**
  * Created by robertogiba on 23.10.2017.
  */
 
-public class GameThread extends Thread {
+public class GameThread extends Thread implements OnWorldBehaviorListener {
     private static final String TAG = "GameThread";
 
     private int canvasWidth = 1;
@@ -54,6 +55,7 @@ public class GameThread extends Thread {
         this.context = context;
         this.world = new World();
 
+        this.world.setWorldBehaviorCallback(this);
         this.shipNode = new ShipNode(world);
     }
 
@@ -196,6 +198,41 @@ public class GameThread extends Thread {
             }
 
             this.startGeneratingTime = now + 5000;
+        }
+    }
+
+    @Override
+    public void onReachedEdge(Body item, WorldEdges edge) {
+        switch (edge) {
+            case TOP:
+                if (item.getData() instanceof ProjectileNode &&
+                        !(item.getData() instanceof ShipNode)) {
+                    Log.i(TAG, edge.toString());
+                    item.destroy();
+                }
+                break;
+            case RIGHT:
+                if (item.getData() instanceof OpponentNode &&
+                        !(item.getData() instanceof ShipNode)) {
+                    Log.i(TAG, edge.toString());
+                    final Vector2 currentVelocity = item.getVelocity();
+                    item.setVelocity(Vector2.multiplyXAxist(currentVelocity, -1));
+                }
+                break;
+            case LEFT:
+                if (item.getData() instanceof OpponentNode &&
+                        !(item.getData() instanceof ShipNode)) {
+                    Log.i(TAG, edge.toString());
+                    final Vector2 currentVelocity = item.getVelocity();
+                    item.setVelocity(Vector2.multiplyXAxist(currentVelocity, 1));
+                }
+                break;
+            case BOTTOM:
+                if (!(item.getData() instanceof ShipNode)) {
+                    Log.i(TAG, edge.toString());
+                    item.destroy();
+                }
+                break;
         }
     }
 
