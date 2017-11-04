@@ -1,6 +1,7 @@
 package pl.ogiba.spaceshooter.Engine.Physics;
 
 import android.graphics.RectF;
+import android.util.Size;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -19,6 +20,7 @@ public class Body {
     private Object data;
 
     private boolean isDestroyed;
+    private int moveDirectionDeterminant = 1;
 
     public Body(World world) {
         this.world = world;
@@ -27,17 +29,22 @@ public class Body {
     }
 
     public void update(float ratio) {
-        this.setPosition(Vector2.add(getPosition(), Vector2.multiply(velocity, ratio)));
+        final Vector2 vectorDiff = Vector2.multiply(velocity, ratio);
+        final Size boundaries = world.getBoundaries();
+
+        if (boundaries != null) {
+            if (rect.right >= world.getBoundaries().getWidth()) {
+                moveDirectionDeterminant = -1;
+            } else if (rect.left <= 0) {
+                moveDirectionDeterminant = 1;
+            }
+        }
+
+        this.setPosition(Vector2.add(getPosition(), Vector2.multiplyXAxist(vectorDiff, moveDirectionDeterminant)));
     }
 
     public void destroy() {
         isDestroyed = true;
-    }
-
-    private void updateRect(RectF rect, float diffX, float diffY) {
-        float nextX = rect.left + diffX;
-        float nextY = rect.top + diffY;
-        rect.set(nextX, nextY, nextX + rect.width(), nextY + rect.height());
     }
 
     public boolean isDestroyed() {
@@ -60,7 +67,7 @@ public class Body {
         return rect.width();
     }
 
-    public float getHeigth() {
+    public float getHeight() {
         return rect.height();
     }
 

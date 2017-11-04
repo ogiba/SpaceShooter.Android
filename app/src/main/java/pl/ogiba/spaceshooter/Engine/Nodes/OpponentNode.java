@@ -6,7 +6,6 @@ import android.graphics.Matrix;
 import android.graphics.RectF;
 import android.support.annotation.Nullable;
 
-import java.util.ArrayList;
 import java.util.Random;
 
 import pl.ogiba.spaceshooter.Engine.Physics.World;
@@ -38,7 +37,7 @@ public class OpponentNode extends BaseNode {
     private void generateNewPosition() {
         float newXPosition = generateNewXPosition();
 
-        body.setPosition(new Vector2(newXPosition, 0 - body.getHeigth()));
+        body.setPosition(new Vector2(newXPosition, 0 - body.getHeight()));
     }
 
     private float generateNewXPosition() {

@@ -1,6 +1,7 @@
 package pl.ogiba.spaceshooter.Engine.Physics;
 
 import android.support.annotation.Nullable;
+import android.util.Size;
 
 import java.util.ArrayList;
 
@@ -12,6 +13,7 @@ public class World {
     private ArrayList<Body> items;
     @Nullable
     private OnCollisionListener collisionCallback;
+    private Size boundaries;
 
     public World() {
         this.items = new ArrayList<>();
@@ -23,11 +25,11 @@ public class World {
             item.update(ratio);
 
             checkCollisionsWithItems(i);
-
-            if (item.isDestroyed()) {
-                items.remove(i);
-                i--;
-            }
+//
+//            if (item.isDestroyed()) {
+//                items.remove(i);
+//                i--;
+//            }
         }
     }
 
@@ -36,7 +38,7 @@ public class World {
         for (int j = position + 1; j < items.size(); j++) {
             final Body item2 = items.get(j);
 
-            if (item1.getRect().intersect(item2.getRect()))
+            if (item2.getRect().intersect(item1.getRect()))
                 invokeCollisionCallback(item1, item2);
         }
     }
@@ -60,5 +62,13 @@ public class World {
 
     public void setCollisionCallback(@Nullable OnCollisionListener collisionCallback) {
         this.collisionCallback = collisionCallback;
+    }
+
+    public void setBoundaries(Size boundaries) {
+        this.boundaries = boundaries;
+    }
+
+    public Size getBoundaries() {
+        return boundaries;
     }
 }

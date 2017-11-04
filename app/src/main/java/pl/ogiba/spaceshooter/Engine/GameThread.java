@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.util.Size;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 
@@ -210,6 +211,7 @@ public class GameThread extends Thread {
             this.canvasHeight = canvasHeight;
 
             shipNode.setDefaultPosition(canvasWidth, canvasHeight);
+            world.setBoundaries(new Size(canvasWidth, canvasHeight));
         }
     }
 
