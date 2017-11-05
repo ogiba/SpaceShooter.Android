@@ -31,6 +31,7 @@ public class GameThread extends Thread implements OnWorldBehaviorListener {
     private int canvasWidth = 1;
     private int canvasHeight = 1;
     private int numberOfOpponents = 0;
+    private int numberOfProjectile = 0;
 
     private long lastTime;
     private long startGeneratingTime;
@@ -153,6 +154,11 @@ public class GameThread extends Thread implements OnWorldBehaviorListener {
     private void doDraw(Canvas canvas) {
         canvas.drawColor(Color.BLUE);
 
+        if (numberOfProjectile > 0) {
+            numberOfProjectile--;
+            new ProjectileNode(shipNode, world);
+        }
+
         for (Body worldItem : world.getItems()) {
             final BaseNode node = (BaseNode) worldItem.getData();
             node.draw(canvas);
@@ -182,7 +188,7 @@ public class GameThread extends Thread implements OnWorldBehaviorListener {
         final float xPos = shipNode.getCurrentPositionX() - ShipNode.SHIP_RADIUS / 2.0f;
         final float yPos = shipNode.getCurrentPositionY() - ShipNode.SHIP_RADIUS / 2.0f;
 
-        new ProjectileNode(shipNode, world);
+        numberOfProjectile++;
     }
 
     private void generateOpponents() {
@@ -200,6 +206,8 @@ public class GameThread extends Thread implements OnWorldBehaviorListener {
             this.startGeneratingTime = now + 5000;
         }
     }
+
+
 
     @Override
     public void onReachedEdge(Body item, WorldEdges edge) {

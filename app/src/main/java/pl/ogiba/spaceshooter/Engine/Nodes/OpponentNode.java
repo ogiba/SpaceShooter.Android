@@ -6,6 +6,7 @@ import android.graphics.Matrix;
 import android.graphics.RectF;
 import android.support.annotation.Nullable;
 
+import java.nio.file.OpenOption;
 import java.util.Random;
 
 import pl.ogiba.spaceshooter.Engine.Physics.World;
@@ -44,7 +45,7 @@ public class OpponentNode extends BaseNode {
         final float randomValue;
         if (pitchWidth > 0) {
             final Random random = new Random();
-            final int maxValue = Math.round(pitchWidth);
+            final int maxValue = Math.round(pitchWidth - OPPONENT_RADIUS);
             randomValue = (float) random.nextInt(maxValue);
         } else {
             randomValue = (float) Math.random();
