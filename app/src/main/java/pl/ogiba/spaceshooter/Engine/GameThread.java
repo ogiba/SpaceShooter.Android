@@ -239,6 +239,9 @@ public class GameThread extends Thread implements OnWorldBehaviorListener {
                 if (!(item.getData() instanceof ShipNode)) {
                     Log.i(TAG, edge.toString());
                     item.destroy();
+
+                    if (item.getData() instanceof OpponentNode)
+                        numberOfOpponents--;
                 }
                 break;
         }
