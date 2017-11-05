@@ -219,20 +219,13 @@ public class GameThread extends Thread implements OnWorldBehaviorListener {
                     item.destroy();
                 }
                 break;
+            case LEFT:
             case RIGHT:
                 if (item.getData() instanceof OpponentNode &&
                         !(item.getData() instanceof ShipNode)) {
                     Log.i(TAG, edge.toString());
                     final Vector2 currentVelocity = item.getVelocity();
                     item.setVelocity(Vector2.multiplyXAxist(currentVelocity, -1));
-                }
-                break;
-            case LEFT:
-                if (item.getData() instanceof OpponentNode &&
-                        !(item.getData() instanceof ShipNode)) {
-                    Log.i(TAG, edge.toString());
-                    final Vector2 currentVelocity = item.getVelocity();
-                    item.setVelocity(Vector2.multiplyXAxist(currentVelocity, 1));
                 }
                 break;
             case BOTTOM:

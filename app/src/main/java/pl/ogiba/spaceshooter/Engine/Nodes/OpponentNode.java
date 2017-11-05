@@ -6,7 +6,6 @@ import android.graphics.Matrix;
 import android.graphics.RectF;
 import android.support.annotation.Nullable;
 
-import java.nio.file.OpenOption;
 import java.util.Random;
 
 import pl.ogiba.spaceshooter.Engine.Physics.World;
@@ -31,7 +30,7 @@ public class OpponentNode extends BaseNode {
         super(world);
 
         this.body.setRect(new RectF(0, 0, OPPONENT_RADIUS, OPPONENT_RADIUS));
-        this.body.setVelocity(new Vector2(1.0f, 3.0f));
+        this.body.setVelocity(new Vector2(4.0f, 2.0f));
         generateNewPosition();
     }
 
