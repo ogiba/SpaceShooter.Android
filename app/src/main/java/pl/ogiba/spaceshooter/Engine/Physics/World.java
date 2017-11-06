@@ -84,11 +84,11 @@ public class World {
         return items;
     }
 
-    public void setCollisionCallback(@Nullable OnCollisionListener collisionListener) {
+    public void setCollisionListener(@Nullable OnCollisionListener collisionListener) {
         this.collisionCallback = collisionListener;
     }
 
-    public void setWorldBehaviorCallback(@Nullable OnWorldBehaviorListener worldBehaviorListener) {
+    public void setWorldBehaviorListener(@Nullable OnWorldBehaviorListener worldBehaviorListener) {
         this.worldBehaviorCallback = worldBehaviorListener;
     }
 

@@ -15,6 +15,7 @@ import pl.ogiba.spaceshooter.Engine.Nodes.OpponentNode;
 import pl.ogiba.spaceshooter.Engine.Nodes.ProjectileNode;
 import pl.ogiba.spaceshooter.Engine.Nodes.ShipNode;
 import pl.ogiba.spaceshooter.Engine.Physics.Body;
+import pl.ogiba.spaceshooter.Engine.Physics.OnCollisionListener;
 import pl.ogiba.spaceshooter.Engine.Physics.OnWorldBehaviorListener;
 import pl.ogiba.spaceshooter.Engine.Physics.World;
 import pl.ogiba.spaceshooter.Engine.Physics.WorldEdges;
@@ -25,7 +26,7 @@ import pl.ogiba.spaceshooter.Engine.Utils.Vector2;
  * Created by robertogiba on 23.10.2017.
  */
 
-public class GameThread extends Thread implements OnWorldBehaviorListener {
+public class GameThread extends Thread implements OnWorldBehaviorListener, OnCollisionListener {
     private static final String TAG = "GameThread";
 
     private int canvasWidth = 1;
@@ -56,7 +57,8 @@ public class GameThread extends Thread implements OnWorldBehaviorListener {
         this.context = context;
         this.world = new World();
 
-        this.world.setWorldBehaviorCallback(this);
+        this.world.setWorldBehaviorListener(this);
+        this.world.setCollisionListener(this);
         this.shipNode = new ShipNode(world);
     }
 
@@ -237,6 +239,18 @@ public class GameThread extends Thread implements OnWorldBehaviorListener {
                         numberOfOpponents--;
                 }
                 break;
+        }
+    }
+
+    @Override
+    public void onCollision(Body source, Body dest) {
+        //TODO: Need to improve detecting collisions between projectile and opponent
+        if (source.getData() instanceof ProjectileNode &&
+                dest.getData() instanceof OpponentNode) {
+            source.destroy();
+            dest.destroy();
+            numberOfProjectile--;
+            numberOfOpponents--;
         }
     }
 
