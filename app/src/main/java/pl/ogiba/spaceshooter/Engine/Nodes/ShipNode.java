@@ -61,11 +61,13 @@ public class ShipNode extends BaseNode {
 
 
         final float newY;
-        if (currentY <= pitchHeight && currentY >= pitchHeight / 3)
+        if (targetY <= pitchHeight && targetY >= pitchHeight / 3)
 //            currentY = newY;
             newY = currentY - (currentY - targetY) * speed;
+        else if (targetY < pitchHeight / 3)
+            newY = currentY - (currentY - (pitchHeight / 3)) * speed;
         else
-            newY = 0;
+            newY = currentY;
         Log.d("CURRENT_Y", "" + currentY);
 
         body.setPosition(new Vector2(newX, newY));
