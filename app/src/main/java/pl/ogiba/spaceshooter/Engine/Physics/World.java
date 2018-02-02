@@ -44,7 +44,10 @@ public class World {
 
     public void checkCollisionsWithItems(int position) {
         final Body item1 = items.get(position);
-        for (int j = position + 1; j < items.size(); j++) {
+        for (int j = 0; j < items.size(); j++) {
+            if (j == position)
+                continue;
+
             final Body item2 = items.get(j);
 
             if (RectF.intersects(item1.getRect(), item2.getRect()))
