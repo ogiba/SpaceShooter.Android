@@ -52,22 +52,25 @@ public class ShipNode extends BaseNode {
         float speedWithRatio = speed * (float) ratio;
 
         final float newX;
-        if (currentX <= pitchWidth && currentX >= 0)
-//            currentX = newX;
+
+        float properMovementWidth = pitchWidth - (SHIP_RADIUS / 2);
+
+        if (targetX <= properMovementWidth && targetX >= 0)
             newX = currentX + (targetX - currentX) * speed;
+        else if (targetX >= properMovementWidth)
+            newX = currentX + (properMovementWidth - currentX) * speed;
         else
-            newX = 0;
+            newX = currentX + (currentX - (SHIP_RADIUS / 2)) * speed;
         Log.d("CURRENT_X", "" + currentX);
 
 
         final float newY;
         if (targetY <= pitchHeight && targetY >= pitchHeight / 3)
-//            currentY = newY;
             newY = currentY - (currentY - targetY) * speed;
         else if (targetY < pitchHeight / 3)
             newY = currentY - (currentY - (pitchHeight / 3)) * speed;
         else
-            newY = currentY;
+            newY = currentY + (pitchHeight - currentY - (SHIP_RADIUS / 2)) * speed;
         Log.d("CURRENT_Y", "" + currentY);
 
         body.setPosition(new Vector2(newX, newY));
