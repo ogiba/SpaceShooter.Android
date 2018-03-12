@@ -105,6 +105,24 @@ public class GameThread extends Thread implements OnWorldBehaviorListener, OnCol
     public void gameOver() {
         setState(GameState.PLAYER_FAILED);
         shipNode.reset();
+
+        for (Body body : world.getItems()) {
+            if (body.getData() instanceof OpponentNode) {
+                if (numberOfOpponents > 0) {
+                    numberOfOpponents--;
+                }
+
+                body.destroy();
+            } else if (body.getData() instanceof ProjectileNode) {
+                if (numberOfProjectile > 0) {
+                    numberOfProjectile--;
+                }
+
+                body.destroy();
+            }
+        }
+
+
         gameState.notifyPlayerFailed();
     }
 
