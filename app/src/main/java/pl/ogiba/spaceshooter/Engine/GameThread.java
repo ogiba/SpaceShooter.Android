@@ -114,14 +114,9 @@ public class GameThread extends Thread implements OnWorldBehaviorListener, OnCol
 
                 body.destroy();
             } else if (body.getData() instanceof ProjectileNode) {
-                if (numberOfProjectile > 0) {
-                    numberOfProjectile--;
-                }
-
                 body.destroy();
             }
         }
-
 
         gameState.notifyPlayerFailed();
     }

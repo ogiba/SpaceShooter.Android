@@ -37,7 +37,9 @@ public class ShipNode extends BaseNode {
         this.pitchWidth = viewWidth;
         this.pitchHeight = viewHeight;
 
-        body.setPosition(new Vector2(viewWidth / 2f, viewHeight * 5f / 6f));
+        float xPosition = viewWidth / 2f - SHIP_RADIUS / 2f;
+
+        body.setPosition(new Vector2(xPosition, viewHeight * 5f / 6f));
     }
 
     public void setDefaultSpeed() {
