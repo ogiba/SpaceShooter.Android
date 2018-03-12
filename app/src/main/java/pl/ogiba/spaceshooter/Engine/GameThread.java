@@ -210,7 +210,6 @@ public class GameThread extends Thread implements OnWorldBehaviorListener, OnCol
     }
 
 
-
     @Override
     public void onReachedEdge(Body item, WorldEdges edge) {
         switch (edge) {
@@ -251,6 +250,11 @@ public class GameThread extends Thread implements OnWorldBehaviorListener, OnCol
             dest.destroy();
             numberOfProjectile--;
             numberOfOpponents--;
+        } else if (source.getData() instanceof ShipNode && dest.getData() instanceof OpponentNode) {
+            source.destroy();
+            dest.destroy();
+            numberOfOpponents--;
+            gameOver();
         }
     }
 

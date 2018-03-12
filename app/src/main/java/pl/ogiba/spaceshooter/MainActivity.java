@@ -73,6 +73,7 @@ public class MainActivity extends AppCompatActivity
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                overlay.setVisibility(View.VISIBLE);
                 gameThread.setState(GameState.READY);
             }
         });
