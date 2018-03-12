@@ -104,7 +104,7 @@ public class GameThread extends Thread implements OnWorldBehaviorListener, OnCol
 
     public void gameOver() {
         setState(GameState.PLAYER_FAILED);
-        shipNode.setDefaultSpeed();
+        shipNode.reset();
         gameState.notifyPlayerFailed();
     }
 

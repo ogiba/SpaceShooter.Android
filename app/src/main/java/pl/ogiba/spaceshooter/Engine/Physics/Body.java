@@ -31,6 +31,10 @@ public class Body {
         isDestroyed = true;
     }
 
+    public void restore() {
+        isDestroyed = false;
+    }
+
     public boolean isDestroyed() {
         return isDestroyed;
     }

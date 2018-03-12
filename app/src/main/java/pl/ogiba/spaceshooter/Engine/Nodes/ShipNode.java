@@ -95,6 +95,13 @@ public class ShipNode extends BaseNode {
         canvas.drawBitmap(shipBitmap, enterTheMatrix, null);
     }
 
+    public void reset() {
+        setDefaultSpeed();
+        setDefaultPosition(pitchWidth, pitchHeight);
+
+        body.restore();
+    }
+
     public void moveToPosition(float newX, float newY) {
         this.speed = 0.1f;
         this.targetX = newX;
