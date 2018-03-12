@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.util.Size;
@@ -28,6 +29,7 @@ import pl.ogiba.spaceshooter.Engine.Utils.Vector2;
 
 public class GameThread extends Thread implements OnWorldBehaviorListener, OnCollisionListener {
     private static final String TAG = "GameThread";
+    private static final int BASE_SHOOTING_DELAY = 1000;
 
     private int canvasWidth = 1;
     private int canvasHeight = 1;
@@ -51,11 +53,16 @@ public class GameThread extends Thread implements OnWorldBehaviorListener, OnCol
     private ShipNode shipNode;
 
     private Bitmap opponentBitmap;
+    private boolean shootingBlocked;
+    private int shootingCooldown;
 
     public GameThread(SurfaceHolder surfaceHolder, Context context) {
         this.surfaceHolder = surfaceHolder;
         this.context = context;
         this.world = new World();
+
+        this.shootingBlocked = false;
+        this.shootingCooldown = BASE_SHOOTING_DELAY;
 
         this.world.setWorldBehaviorListener(this);
         this.world.setCollisionListener(this);
@@ -202,8 +209,15 @@ public class GameThread extends Thread implements OnWorldBehaviorListener, OnCol
     private void shoot() {
         final float xPos = shipNode.getCurrentPositionX() - ShipNode.SHIP_RADIUS / 2.0f;
         final float yPos = shipNode.getCurrentPositionY() - ShipNode.SHIP_RADIUS / 2.0f;
+        
+        if (!shootingBlocked) {
+            shootingBlocked = true;
+            numberOfProjectile++;
 
-        numberOfProjectile++;
+            new Handler().postDelayed(() -> {
+                shootingBlocked = false;
+            }, shootingCooldown);
+        }
     }
 
     private void generateOpponents() {
