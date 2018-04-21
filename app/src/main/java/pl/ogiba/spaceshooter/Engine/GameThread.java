@@ -6,6 +6,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.util.Size;
@@ -29,12 +30,11 @@ import pl.ogiba.spaceshooter.Engine.Utils.Vector2;
 
 public class GameThread extends Thread implements OnWorldBehaviorListener, OnCollisionListener {
     private static final String TAG = "GameThread";
-    private static final int BASE_SHOOTING_DELAY = 1000;
+    private static final int BASE_SHOOTING_DELAY = 400;
 
     private int canvasWidth = 1;
     private int canvasHeight = 1;
     private int numberOfOpponents = 0;
-    private int numberOfProjectile = 0;
 
     private long lastTime;
     private long startGeneratingTime;
@@ -55,6 +55,7 @@ public class GameThread extends Thread implements OnWorldBehaviorListener, OnCol
     private Bitmap opponentBitmap;
     private boolean shootingBlocked;
     private int shootingCooldown;
+    private boolean isShooting;
 
     public GameThread(SurfaceHolder surfaceHolder, Context context) {
         this.surfaceHolder = surfaceHolder;
@@ -155,7 +156,7 @@ public class GameThread extends Thread implements OnWorldBehaviorListener, OnCol
                 case MotionEvent.ACTION_DOWN:
                 case MotionEvent.ACTION_POINTER_DOWN:
                     Log.d(TAG, "ACTION_DOWN");
-                    shoot();
+                    isShooting = true;
                     break;
                 case MotionEvent.ACTION_MOVE:
                     shipNode.moveToPosition(event.getX(), event.getY());
@@ -163,6 +164,7 @@ public class GameThread extends Thread implements OnWorldBehaviorListener, OnCol
                 case MotionEvent.ACTION_UP:
                 case MotionEvent.ACTION_POINTER_UP:
                     Log.d(TAG, "ACTION_UP");
+                    isShooting = false;
                     shipNode.setDefaultSpeed();
                     break;
             }
@@ -176,10 +178,10 @@ public class GameThread extends Thread implements OnWorldBehaviorListener, OnCol
     private void doDraw(Canvas canvas) {
         canvas.drawColor(Color.BLUE);
 
-        if (numberOfProjectile > 0) {
-            numberOfProjectile--;
-            new ProjectileNode(shipNode, world);
-        }
+//        if (numberOfProjectile > 0) {
+//            numberOfProjectile--;
+//            new ProjectileNode(shipNode, world);
+//        }
 
         for (Body worldItem : world.getItems()) {
             final BaseNode node = (BaseNode) worldItem.getData();
@@ -196,6 +198,8 @@ public class GameThread extends Thread implements OnWorldBehaviorListener, OnCol
 
         double ratio = elapsed / 0.015d;
 
+        checkShootings();
+
         world.update((float) ratio);
         for (int i = 0; i < world.getItems().size(); i++) {
             final BaseNode node = (BaseNode) world.getItems().get(i).getData();
@@ -206,17 +210,28 @@ public class GameThread extends Thread implements OnWorldBehaviorListener, OnCol
         this.lastTime = now;
     }
 
-    private void shoot() {
+    private void checkShootings() {
+        if (isShooting) {
+            playerShoot();
+        }
+//        int i = opponentShots.size() - 1;
+//        for (; i >= 0; i--) {
+//            Pair<Vector2, Vector2> pair = opponentShots.get(i);
+//            opponentShots.remove(pair);
+//            new OpponentProjectileNode(world, pair.first, pair.second);
+//        }
+    }
+
+
+    private void playerShoot() {
         final float xPos = shipNode.getCurrentPositionX() - ShipNode.SHIP_RADIUS / 2.0f;
         final float yPos = shipNode.getCurrentPositionY() - ShipNode.SHIP_RADIUS / 2.0f;
-        
+
         if (!shootingBlocked) {
             shootingBlocked = true;
-            numberOfProjectile++;
-
-            new Handler().postDelayed(() -> {
-                shootingBlocked = false;
-            }, shootingCooldown);
+//            numberOfProjectile++;
+            new ProjectileNode(shipNode, world);
+            new Handler(Looper.getMainLooper()).postDelayed(() -> shootingBlocked = false, shootingCooldown);
         }
     }
 
@@ -275,7 +290,6 @@ public class GameThread extends Thread implements OnWorldBehaviorListener, OnCol
                 dest.getData() instanceof OpponentNode) {
             source.destroy();
             dest.destroy();
-            numberOfProjectile--;
             numberOfOpponents--;
         } else if (source.getData() instanceof ShipNode && dest.getData() instanceof OpponentNode) {
             source.destroy();
