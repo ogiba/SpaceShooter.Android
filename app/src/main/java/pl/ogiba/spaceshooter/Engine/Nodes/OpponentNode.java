@@ -5,9 +5,12 @@ import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.RectF;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
+import java.nio.file.OpenOption;
 import java.util.Random;
 
+import pl.ogiba.spaceshooter.Engine.Physics.Body;
 import pl.ogiba.spaceshooter.Engine.Physics.World;
 import pl.ogiba.spaceshooter.Engine.Utils.BaseNode;
 import pl.ogiba.spaceshooter.Engine.Utils.Vector2;
@@ -19,6 +22,7 @@ import pl.ogiba.spaceshooter.Engine.Utils.Vector2;
 public class OpponentNode extends BaseNode {
     public static final float OPPONENT_RADIUS = 80f;
     public static final float DEFAULT_SPEED = 2f;
+    private static final String TAG = "OpponentNode";
 
     private float speed = DEFAULT_SPEED;
 
@@ -31,11 +35,16 @@ public class OpponentNode extends BaseNode {
 
         this.body.setRect(new RectF(0, 0, OPPONENT_RADIUS, OPPONENT_RADIUS));
         this.body.setVelocity(new Vector2(4.0f, 2.0f));
-        generateNewPosition();
+//        generateNewPosition();
+
     }
 
-    private void generateNewPosition() {
+    private void generateNewPosition(World world) {
         float newXPosition = generateNewXPosition();
+
+        while (!validateNewPosition(world, newXPosition)) {
+            newXPosition = generateNewXPosition();
+        }
 
         body.setPosition(new Vector2(newXPosition, 0 - body.getHeight()));
     }
@@ -53,6 +62,25 @@ public class OpponentNode extends BaseNode {
         return randomValue;
     }
 
+    private boolean validateNewPosition(World world, float newPosition) {
+        for (Body item : world.getItems()) {
+            if (item.getData() instanceof OpponentNode) {
+                if (item.getRect().left < newPosition
+                        && item.getRect().right > newPosition) {
+                    Log.d(TAG, "validateNewPosition: Invalid");
+                    return false;
+                } else if (item.getRect().left > newPosition
+                        && item.getRect().left < newPosition + OPPONENT_RADIUS
+                        && item.getRect().right > newPosition + OPPONENT_RADIUS) {
+                    Log.d(TAG, "validateNewPosition: Invalid");
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
     private void updateRect(RectF rect, float diffX, float diffY) {
         if (rect.right >= pitchWidth) {
             directionDeterminant = -1;
@@ -64,24 +92,6 @@ public class OpponentNode extends BaseNode {
         float nextY = rect.top + diffY;
         rect.set(nextX, nextY, nextX + rect.width(), nextY + rect.height());
     }
-
-//    public void updatePosition(double ratio) {
-//        float speedWithRatio = speed * (float) ratio;
-//
-////        currentX = currentX + speedWithRatio * currentVector.x;
-//        final float newX = currentX + (targetX - currentX) * speed;
-//        if (newX <= pitchWidth && newX >= 0)
-//            currentX = newX;
-//        Log.d("CURRENT_X", "" + currentX);
-////        currentY = currentY + speedWithRatio * currentVector.y;
-//        final float newY = currentY - (currentY - targetY) * speed;
-//        if (newY <= pitchHeight && newY >= pitchHeight / 3)
-//            currentY = newY;
-//        Log.d("CURRENT_Y", "" + currentY);
-//
-//        currentVector.x += ratio;
-//        currentVector.normalize();
-//    }
 
     @Override
     public void update(float ratio) {
@@ -106,7 +116,11 @@ public class OpponentNode extends BaseNode {
     public void setPitchSize(float pitchWidth, float pitchHeight) {
         super.setPitchSize(pitchWidth, pitchHeight);
 
-        generateNewPosition();
+//        generateNewPosition();
+    }
+
+    public void locate(World world) {
+        generateNewPosition(world);
     }
 
     public void setOpponentBitmap(@Nullable Bitmap opponentBitmap) {

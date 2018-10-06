@@ -244,6 +244,7 @@ public class GameThread extends Thread implements OnWorldBehaviorListener, OnCol
                     OpponentNode opponentNode = new OpponentNode(world);
                     opponentNode.setOpponentBitmap(opponentBitmap);
                     opponentNode.setPitchSize(canvasWidth, canvasHeight);
+                    opponentNode.locate(world);
                 }
             }
 
