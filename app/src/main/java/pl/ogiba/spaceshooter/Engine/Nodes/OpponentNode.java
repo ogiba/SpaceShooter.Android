@@ -21,6 +21,7 @@ import pl.ogiba.spaceshooter.Engine.Utils.Vector2;
 public class OpponentNode extends BaseNode {
     public static final float OPPONENT_RADIUS = 80f;
     public static final float DEFAULT_SPEED = 4f;
+    public static final float DEFAULT_Y_SPEED = 2f;
     private static final String TAG = "OpponentNode";
 
     private float speed = DEFAULT_SPEED;
@@ -33,7 +34,7 @@ public class OpponentNode extends BaseNode {
         super(world);
 
         this.body.setRect(new RectF(0, 0, OPPONENT_RADIUS, OPPONENT_RADIUS));
-        this.body.setVelocity(new Vector2(speed, 2.0f));
+        this.body.setVelocity(new Vector2(speed, DEFAULT_Y_SPEED));
     }
 
     private void generateNewPosition(World world) {
@@ -103,6 +104,11 @@ public class OpponentNode extends BaseNode {
 
     public void locate(World world) {
         generateNewPosition(world);
+    }
+
+    public void increaseSpeed(float speed) {
+        this.speed = speed;
+        this.body.setVelocity(new Vector2(speed, DEFAULT_Y_SPEED));
     }
 
     public void setOpponentBitmap(@Nullable Bitmap opponentBitmap) {

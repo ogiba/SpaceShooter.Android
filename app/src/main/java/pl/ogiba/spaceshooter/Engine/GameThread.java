@@ -13,6 +13,8 @@ import android.util.Size;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 
+import java.util.Random;
+
 import pl.ogiba.spaceshooter.Engine.Nodes.OpponentNode;
 import pl.ogiba.spaceshooter.Engine.Nodes.ProjectileNode;
 import pl.ogiba.spaceshooter.Engine.Nodes.ShipNode;
@@ -31,6 +33,7 @@ import pl.ogiba.spaceshooter.Engine.Utils.Vector2;
 public class GameThread extends Thread implements OnWorldBehaviorListener, OnCollisionListener {
     private static final String TAG = "GameThread";
     private static final int BASE_SHOOTING_DELAY = 400;
+    private static final int DEFAULT_MAX_WAVE_SIZE = 3;
 
     private int canvasWidth = 1;
     private int canvasHeight = 1;
@@ -239,7 +242,8 @@ public class GameThread extends Thread implements OnWorldBehaviorListener, OnCol
         final long now = System.currentTimeMillis();
         if (startGeneratingTime < now) {
             if (numberOfOpponents < 10) {
-                for (int i = 0; i < 2; i++) {
+
+                for (int i = 0; i < waveSize(); i++) {
                     numberOfOpponents++;
                     OpponentNode opponentNode = new OpponentNode(world);
                     opponentNode.setOpponentBitmap(opponentBitmap);
@@ -250,6 +254,11 @@ public class GameThread extends Thread implements OnWorldBehaviorListener, OnCol
 
             this.startGeneratingTime = now + 5000;
         }
+    }
+
+    private int waveSize() {
+        final Random random = new Random();
+        return random.nextInt(DEFAULT_MAX_WAVE_SIZE);
     }
 
 
