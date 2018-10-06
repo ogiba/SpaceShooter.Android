@@ -7,7 +7,6 @@ import android.graphics.RectF;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-import java.nio.file.OpenOption;
 import java.util.Random;
 
 import pl.ogiba.spaceshooter.Engine.Physics.Body;
@@ -21,7 +20,7 @@ import pl.ogiba.spaceshooter.Engine.Utils.Vector2;
 
 public class OpponentNode extends BaseNode {
     public static final float OPPONENT_RADIUS = 80f;
-    public static final float DEFAULT_SPEED = 2f;
+    public static final float DEFAULT_SPEED = 4f;
     private static final String TAG = "OpponentNode";
 
     private float speed = DEFAULT_SPEED;
@@ -34,9 +33,7 @@ public class OpponentNode extends BaseNode {
         super(world);
 
         this.body.setRect(new RectF(0, 0, OPPONENT_RADIUS, OPPONENT_RADIUS));
-        this.body.setVelocity(new Vector2(4.0f, 2.0f));
-//        generateNewPosition();
-
+        this.body.setVelocity(new Vector2(speed, 2.0f));
     }
 
     private void generateNewPosition(World world) {
@@ -81,18 +78,6 @@ public class OpponentNode extends BaseNode {
         return true;
     }
 
-    private void updateRect(RectF rect, float diffX, float diffY) {
-        if (rect.right >= pitchWidth) {
-            directionDeterminant = -1;
-        } else if (rect.left <= 0) {
-            directionDeterminant = 1;
-        }
-
-        float nextX = rect.left + (diffX * directionDeterminant);
-        float nextY = rect.top + diffY;
-        rect.set(nextX, nextY, nextX + rect.width(), nextY + rect.height());
-    }
-
     @Override
     public void update(float ratio) {
 
@@ -105,7 +90,6 @@ public class OpponentNode extends BaseNode {
 
         final RectF srcRect = new RectF(0, 0, opponentBitmap.getWidth(), opponentBitmap.getHeight());
 
-//            if (opponent.getRect().centerY() <= canvasHeight) {
         Matrix matrix = new Matrix();
         matrix.setRectToRect(srcRect, body.getRect(), Matrix.ScaleToFit.CENTER);
 
@@ -115,8 +99,6 @@ public class OpponentNode extends BaseNode {
     @Override
     public void setPitchSize(float pitchWidth, float pitchHeight) {
         super.setPitchSize(pitchWidth, pitchHeight);
-
-//        generateNewPosition();
     }
 
     public void locate(World world) {
